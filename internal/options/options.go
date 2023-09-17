@@ -47,3 +47,15 @@ func getLogLevel() log.Level {
 	}
 	return logLevel
 }
+
+/*
+Take serial port from env 'SERIAL_PORT'
+Default: 4
+*/
+func getSerialPort() string {
+	port := os.Getenv("SERIAL_PORT")
+	if port == "" {
+		port = "4"
+	}
+	return port
+}
