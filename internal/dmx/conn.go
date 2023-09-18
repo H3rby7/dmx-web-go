@@ -44,7 +44,7 @@ func (d *DMXConn) Stage(channel int, value int) (ok bool) {
 		ok = false
 		d.errs = append(d.errs, err)
 	}
-	if err := checkValue(channel); err != nil {
+	if err := checkValue(value); err != nil {
 		ok = false
 		d.errs = append(d.errs, err)
 	}

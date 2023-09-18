@@ -57,7 +57,7 @@ Default: 4
 func getSerialPort() string {
 	port := os.Getenv("SERIAL_PORT")
 	if port == "" {
-		port = "4"
+		port = "COM6"
 	}
 	return port
 }
