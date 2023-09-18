@@ -7,14 +7,16 @@ import (
 )
 
 type DMXWebOptions struct {
-	HttpPort string
-	LogLevel log.Level
+	HttpPort   string
+	LogLevel   log.Level
+	SerialPort string
 }
 
 // Local instance holding our settings
 var optionsInstance = DMXWebOptions{
-	HttpPort: getServerPort(),
-	LogLevel: getLogLevel(),
+	HttpPort:   getServerPort(),
+	LogLevel:   getLogLevel(),
+	SerialPort: getSerialPort(),
 }
 
 /*
