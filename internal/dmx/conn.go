@@ -13,6 +13,12 @@ type DMXConn struct {
 	ok   bool
 }
 
+var dmxConn = DMXConn{}
+
+func GetDMXConn() *DMXConn {
+	return &dmxConn
+}
+
 // Initialize connection to the serial device over USB
 func (d *DMXConn) Connect(port string) {
 	log.Infof("Opening DMX Serial using port %s", port)
@@ -61,6 +67,11 @@ func (d *DMXConn) Commit() error {
 	}
 	d.Reset()
 	return fmt.Errorf("staged commands had errors")
+}
+
+// Get current errors
+func (d *DMXConn) GetErrors() []error {
+	return d.errs
 }
 
 // Clear values, reset errors and 'ok'
