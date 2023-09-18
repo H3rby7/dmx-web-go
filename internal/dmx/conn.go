@@ -10,7 +10,6 @@ import (
 type DMXConn struct {
 	dmx  *dmx.DMX
 	errs []error
-	ok   bool
 }
 
 var dmxConn = DMXConn{}
@@ -50,8 +49,6 @@ func (d *DMXConn) Stage(channel int, value int) (ok bool) {
 	}
 	if ok {
 		d.dmx.SetChannel(channel, byte(value))
-	} else {
-		d.ok = false
 	}
 	return
 }
@@ -59,7 +56,7 @@ func (d *DMXConn) Stage(channel int, value int) (ok bool) {
 // Send staged values to DMX
 // If invalid staging occurred logs errors and resets
 func (d *DMXConn) Commit() error {
-	if d.ok {
+	if len(d.errs) == 0 {
 		return d.dmx.Render()
 	}
 	for _, e := range d.errs {
@@ -80,7 +77,6 @@ func (d *DMXConn) Reset() {
 	// Might be that with the next 'send' we lose all previously sent values in the DMX?
 	d.dmx.ClearAll()
 	d.errs = make([]error, 0)
-	d.ok = true
 }
 
 // Send some static test values
