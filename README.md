@@ -25,6 +25,8 @@ If running/debugging via VS-Code, make sure to pass the necessary flags as args 
 ]
 ```
 
+*Note: Boolean flags require the use of `=` eg. `-myflag=[true|false]`*
+
 ## Example CURLs
 
 Pass value for a channel:

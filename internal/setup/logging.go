@@ -7,12 +7,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/H3rby7/dmx-web-go/internal/options"
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	log "github.com/sirupsen/logrus"
 )
 
-func SetUpLogging(logLevel log.Level) {
-	log.SetLevel(logLevel)
+// Configures logging with respect to the app options
+func SetUpLogging() {
+	opts := options.GetAppOptions()
+	log.SetLevel(opts.LogLevel)
 	var formatter = nested.Formatter{
 		// HideKeys:        true,
 		CallerFirst:     true,
