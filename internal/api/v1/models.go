@@ -1,8 +1,8 @@
 package apiv1
 
 type DMXValueForChannel struct {
-	Channel int
-	Value   int
+	Channel int16
+	Value   byte
 }
 
 type MultipleDMXValueForChannel struct {

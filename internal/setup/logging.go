@@ -11,11 +11,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func SetUpLogging(level string) {
-	logLevel, err := log.ParseLevel(level)
-	if err != nil {
-		logLevel = log.InfoLevel
-	}
+func SetUpLogging(logLevel log.Level) {
 	log.SetLevel(logLevel)
 	var formatter = nested.Formatter{
 		// HideKeys:        true,
