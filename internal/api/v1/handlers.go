@@ -12,7 +12,6 @@ func RegisterHandlers(g *gin.RouterGroup) {
 
 // Handle incoming dmx channel
 func dmxHandler(c *gin.Context) {
-	ok := true
 	data := MultipleDMXValueForChannel{}
 	err := c.BindJSON(&data)
 	if err != nil {
@@ -20,27 +19,21 @@ func dmxHandler(c *gin.Context) {
 		c.AbortWithStatus(400)
 		return
 	}
-	dmx := dmxconn.GetDMXConn()
+	dmx := dmxconn.GetWriter()
 	for _, entry := range data.List {
-		if !(dmx.Stage(entry.Channel, entry.Value)) {
-			ok = false
-		}
-	}
-	if !ok {
-		// TODO: Move validation into 'gin' instead of the dmx conn
-		for _, err := range dmx.GetErrors() {
+		if err = dmx.Stage(entry.Channel, entry.Value); err != nil {
 			c.Error(err)
 		}
+	}
+	if len(c.Errors) != 0 {
 		c.AbortWithStatus(400)
 		return
 	}
-	if ok {
-		err = dmx.Commit()
-		if err != nil {
-			c.Error(err)
-			c.AbortWithStatus(500)
-			return
-		}
-		c.String(200, "OK")
+	err = dmx.Commit()
+	if err != nil {
+		c.Error(err)
+		c.AbortWithStatus(500)
+		return
 	}
+	c.String(200, "OK")
 }

@@ -2,6 +2,33 @@
 
 Offers simplistic API and converts calls into DMX commands.
 
+- [DMX Webserver](#dmx-webserver)
+- [Running](#running)
+  - [Example CURLs](#example-curls)
+
+# Running
+
+```sh
+# Replace COM5 with whatever port your dmx is attached to
+go run cmd\dmxweb\dmxweb.go -dmx-write-port COM5
+```
+
+If running/debugging via VS-Code, make sure to pass the necessary flags as args via [launch.json](./.vscode/launch.json). For example
+
+```yaml
+"configurations": [
+    {
+  "name": "my super awesome config",
+  # ...
+  "args": ["-dmx-write-port", "COM5"]
+    }
+]
+```
+
+## Example CURLs
+
+Pass value for a channel:
+
 ```sh
 curl -v -X POST -H "Content-Type: application/json" -d "{\"list\": [{\"channel\": 1, \"value\": 150}]}" http://localhost:8080/api/v1/dmx
 ```
