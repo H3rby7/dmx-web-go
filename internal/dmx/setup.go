@@ -1,6 +1,7 @@
 package dmxconn
 
 import (
+	dmxbridge "github.com/H3rby7/dmx-web-go/internal/dmx/bridge"
 	"github.com/H3rby7/dmx-web-go/internal/options"
 	"github.com/H3rby7/usbdmx-golang/controller/enttec/dmxusbpro"
 	log "github.com/sirupsen/logrus"
@@ -13,6 +14,7 @@ type DMXConn struct {
 }
 
 var dmxConn = DMXConn{}
+var bridge *dmxbridge.DMXBridge
 
 func GetWriter() *dmxusbpro.EnttecDMXUSBProController {
 	return dmxConn.writer
@@ -22,20 +24,28 @@ func GetReader() *dmxusbpro.EnttecDMXUSBProController {
 	return dmxConn.reader
 }
 
+func GetBridge() *dmxbridge.DMXBridge {
+	return bridge
+}
+
 func Initialize() {
 	dmxConn.initWriter()
 	dmxConn.initReader()
+	bridge = dmxbridge.NewDMXBridge(GetReader(), GetWriter())
+	bridge.Activate()
+	go bridge.BridgeDMX()
 }
 
 func (d *DMXConn) initWriter() {
 	opts := options.GetAppOptions()
+	channels := opts.DmxChannelCount
 	port := opts.DmxWritePort
 	baud := opts.DmxWriteBaudrate
 	log.Infof("Opening DMX Serial for WRITING using port %s", port)
 	config := &serial.Config{Name: port, Baud: baud}
 
 	// Create a controller and connect to it
-	d.writer = dmxusbpro.NewEnttecDMXUSBProController(config, true)
+	d.writer = dmxusbpro.NewEnttecDMXUSBProController(config, channels, true)
 	if err := d.writer.Connect(); err != nil {
 		log.Fatalf("Failed to connect DMX Controller for WRITING: %s", err)
 	}
@@ -43,6 +53,7 @@ func (d *DMXConn) initWriter() {
 
 func (d *DMXConn) initReader() {
 	opts := options.GetAppOptions()
+	channels := opts.DmxChannelCount
 	port := opts.DmxReadPort
 	if port == "" {
 		log.Warnf("No port specified to READ from DMX - skipping")
@@ -53,7 +64,7 @@ func (d *DMXConn) initReader() {
 	config := &serial.Config{Name: port, Baud: baud}
 
 	// Create a controller and connect to it
-	d.reader = dmxusbpro.NewEnttecDMXUSBProController(config, false)
+	d.reader = dmxusbpro.NewEnttecDMXUSBProController(config, channels, false)
 	if err := d.reader.Connect(); err != nil {
 		log.Fatalf("Failed to connect DMX Controller for READING: %s", err)
 	}
