@@ -12,6 +12,7 @@ import (
 func main() {
 	opts := options.InitAppOptions()
 	setup.SetUpLogging(opts.LogLevel)
+	setup.SetUpDMX()
 
 	router := gin.Default()
 	apiv1.RegisterHandlers(router.Group("/api/v1"))
