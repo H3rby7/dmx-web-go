@@ -8,50 +8,53 @@ import (
 )
 
 type DMXConn struct {
-	dmx *dmxusbpro.EnttecDMXUSBProController
+	writer *dmxusbpro.EnttecDMXUSBProController
+	reader *dmxusbpro.EnttecDMXUSBProController
 }
 
 var dmxConn = DMXConn{}
 
-func GetWriter() *DMXConn {
-	return &dmxConn
+func GetWriter() *dmxusbpro.EnttecDMXUSBProController {
+	return dmxConn.writer
 }
 
-// Initialize connection to the serial device over USB
-func (d *DMXConn) Connect() {
+func GetReader() *dmxusbpro.EnttecDMXUSBProController {
+	return dmxConn.reader
+}
+
+func Initialize() {
+	dmxConn.initWriter()
+	dmxConn.initReader()
+}
+
+func (d *DMXConn) initWriter() {
 	opts := options.GetAppOptions()
 	port := opts.DmxWritePort
 	baud := opts.DmxWriteBaudrate
-	log.Infof("Opening DMX Serial using port %s", port)
+	log.Infof("Opening DMX Serial for WRITING using port %s", port)
 	config := &serial.Config{Name: port, Baud: baud}
 
 	// Create a controller and connect to it
-	d.dmx = dmxusbpro.NewEnttecDMXUSBProController(config, true)
-	if err := d.dmx.Connect(); err != nil {
-		log.Fatalf("Failed to connect DMX Controller: %s", err)
+	d.writer = dmxusbpro.NewEnttecDMXUSBProController(config, true)
+	if err := d.writer.Connect(); err != nil {
+		log.Fatalf("Failed to connect DMX Controller for WRITING: %s", err)
 	}
 }
 
-// Close connection to serial device (for cleanup)
-func (d *DMXConn) Disconnect() {
-	e := d.dmx.Disconnect()
-	if e != nil {
-		log.Fatal(e)
+func (d *DMXConn) initReader() {
+	opts := options.GetAppOptions()
+	port := opts.DmxReadPort
+	if port == "" {
+		log.Warnf("No port specified to READ from DMX - skipping")
+		return
 	}
-}
+	baud := opts.DmxReadBaudrate
+	log.Infof("Opening DMX Serial for READING using port %s", port)
+	config := &serial.Config{Name: port, Baud: baud}
 
-// Set value for a given channel, remember to call 'Commit' to send them
-func (d *DMXConn) Stage(channel int16, value byte) error {
-	return d.dmx.Stage(channel, value)
-}
-
-// Send staged values to DMX
-// If invalid staging occurred logs errors and resets
-func (d *DMXConn) Commit() error {
-	return d.dmx.Commit()
-}
-
-// Clear staged values
-func (d *DMXConn) Clear() {
-	d.dmx.ClearStage()
+	// Create a controller and connect to it
+	d.reader = dmxusbpro.NewEnttecDMXUSBProController(config, false)
+	if err := d.reader.Connect(); err != nil {
+		log.Fatalf("Failed to connect DMX Controller for READING: %s", err)
+	}
 }
