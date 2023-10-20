@@ -53,5 +53,26 @@ func testsoloHandler(c *gin.Context) {
 	bridgeDeactivateHandler(c)
 	w := dmxconn.GetWriter()
 	w.ClearStage()
-	dmxHandler(c)
+	data := MultipleDMXValueForChannel{
+		List: []DMXValueForChannel{
+			{15, 150},
+		},
+	}
+	dmx := dmxconn.GetWriter()
+	for _, entry := range data.List {
+		if err := dmx.Stage(entry.Channel, entry.Value); err != nil {
+			c.Error(err)
+		}
+	}
+	if len(c.Errors) != 0 {
+		c.AbortWithStatus(400)
+		return
+	}
+	err := dmx.Commit()
+	if err != nil {
+		c.Error(err)
+		c.AbortWithStatus(500)
+		return
+	}
+	c.String(200, "OK")
 }
