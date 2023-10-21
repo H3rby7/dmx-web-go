@@ -45,7 +45,7 @@ func (b *DMXBridge) BridgeDMX() {
 	}
 	b.reader.SwitchReadMode(1)
 	c := make(chan messages.EnttecDMXUSBProApplicationMessage)
-	go b.reader.OnDMXChange(c)
+	go b.reader.OnDMXChange(c, 15)
 	for msg := range c {
 		cs, err := messages.ToChangeSet(msg)
 		if err != nil {
