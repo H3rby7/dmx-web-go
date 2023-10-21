@@ -1,11 +1,13 @@
 module github.com/H3rby7/dmx-web-go
 
-go 1.20
+go 1.21
+
+toolchain go1.21.3
 
 require github.com/sirupsen/logrus v1.9.3
 
 require (
-	github.com/H3rby7/usbdmx-golang v0.3.1
+	github.com/H3rby7/usbdmx-golang v0.4.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07
 )

@@ -48,14 +48,30 @@ func handleShutdown(srv *http.Server) {
 		log.Infof("Server was shut down gracefully")
 	}
 
+	reader := dmxconn.GetReader()
+	if reader != nil {
+		log.Debugf("Shutting down DMX reader...")
+		if err := reader.Disconnect(); err != nil {
+			log.Fatal("Error disconnecting DMX reader:", err)
+		} else {
+			log.Infof("DMX reader was shut down gracefully")
+		}
+	}
+
 	log.Debugf("Shutting down DMX writer...")
 	w := dmxconn.GetWriter()
 	shouldClear := options.GetAppOptions().DmxClearOnQuit
-	log.Infof("DMX should be cleared? %v", shouldClear)
 	if shouldClear {
-		w.Clear()
+		log.Infof("Clearing DMX output to zeros")
+		w.ClearStage()
 		w.Commit()
+	} else {
+		log.Debugf("Skipping DMX output cleanup")
 	}
-	w.Disconnect()
+	if err := w.Disconnect(); err != nil {
+		log.Fatal("Error disconnecting DMX writer:", err)
+	} else {
+		log.Infof("DMX writer was shut down gracefully")
+	}
 	log.Infof("Finished cleaning up")
 }
