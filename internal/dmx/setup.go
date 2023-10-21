@@ -31,10 +31,10 @@ func GetBridge() *dmxbridge.DMXBridge {
 func Initialize() {
 	opts := options.GetAppOptions()
 	dmxConn.initWriter()
+	GetWriter().SetLogVerbosity(1)
 	if opts.DmxReadPort != "" {
 		dmxConn.initReader()
 		GetReader().SetLogVerbosity(1)
-		GetWriter().SetLogVerbosity(1)
 		bridge = dmxbridge.NewDMXBridge(GetReader(), GetWriter())
 		bridge.Activate()
 		go bridge.BridgeDMX()
