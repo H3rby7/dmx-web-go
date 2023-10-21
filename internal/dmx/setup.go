@@ -29,11 +29,14 @@ func GetBridge() *dmxbridge.DMXBridge {
 }
 
 func Initialize() {
+	opts := options.GetAppOptions()
 	dmxConn.initWriter()
-	dmxConn.initReader()
-	bridge = dmxbridge.NewDMXBridge(GetReader(), GetWriter())
-	bridge.Activate()
-	go bridge.BridgeDMX()
+	if opts.DmxReadPort != "" {
+		dmxConn.initReader()
+		bridge = dmxbridge.NewDMXBridge(GetReader(), GetWriter())
+		bridge.Activate()
+		go bridge.BridgeDMX()
+	}
 }
 
 func (d *DMXConn) initWriter() {
