@@ -10,7 +10,7 @@ import (
 func RegisterDMXHandlers(g *gin.RouterGroup) {
 	g.PATCH("dmx", patchDmx)
 	g.PATCH("dmx/fade", patchDmxFade)
-	g.PUT("dmx/clear", postDmxClear)
+	g.PUT("dmx/clear", putDmxClear)
 }
 
 // Apply DMX values immediately
@@ -40,7 +40,7 @@ func patchDmxFade(c *gin.Context) {
 }
 
 // Clear all DMX values immediately
-func postDmxClear(c *gin.Context) {
+func putDmxClear(c *gin.Context) {
 	services.ClearAll()
 	c.String(200, "OK")
 }
