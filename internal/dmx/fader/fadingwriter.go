@@ -23,7 +23,7 @@ func NewFadingWriter(writer *dmxusbpro.EnttecDMXUSBProController) *FadingWriter 
 	f := &FadingWriter{
 		isActive: false,
 		writer:   writer,
-		faders:   make([]DMXFader, opts.DmxChannelCount),
+		faders:   make([]DMXFader, opts.DmxChannelCount+1),
 	}
 	for i := range f.faders {
 		f.faders[i] = DMXFader{
