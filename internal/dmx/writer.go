@@ -17,6 +17,7 @@ func createWriter() *dmxusbpro.EnttecDMXUSBProController {
 
 	// Create a controller and connect to it
 	writer := dmxusbpro.NewEnttecDMXUSBProController(config, channels, true)
+	writer.SetLogVerbosity(logVerbosity())
 	if err := writer.Connect(); err != nil {
 		log.Fatalf("Failed to connect DMX Controller for WRITING: %s", err)
 	}

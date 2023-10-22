@@ -21,6 +21,7 @@ func initReader() (reader *dmxusbpro.EnttecDMXUSBProController) {
 
 	// Create a controller and connect to it
 	reader = dmxusbpro.NewEnttecDMXUSBProController(config, channels, false)
+	reader.SetLogVerbosity(logVerbosity())
 	if err := reader.Connect(); err != nil {
 		log.Fatalf("Failed to connect DMX Controller for READING: %s", err)
 	}

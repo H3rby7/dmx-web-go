@@ -23,12 +23,10 @@ func GetBridge() *dmxbridge.DMXBridge {
 func Initialize() {
 	opts := options.GetAppOptions()
 	writer = createWriter()
-	writer.SetLogVerbosity(1)
 	faderWriter = dmxfader.NewFadingWriter(writer)
 	faderWriter.Start()
 	if opts.DmxReadPort != "" {
 		reader = initReader()
-		reader.SetLogVerbosity(1)
 		bridge = dmxbridge.NewDMXBridge(reader, writer)
 		bridge.Activate()
 		go bridge.BridgeDMX()
