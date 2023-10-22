@@ -1,5 +1,33 @@
 <!DOCTYPE html>
-<head></head>
+
+<head>
+  <meta charset="utf-8">
+  <title>DMX HTML Example</title>
+  <script src="scripts.js"></script>
+  <link href="styles.css" rel="stylesheet">
+</head>
+
 <body>
-  Hello!
+  <div>
+    <h1>HTML Example</h1>
+  </div>
+  <div>
+    <span id="feedback"></span>
+  </div>
+  <div>
+    <h2>Simple DMX Request</h2>
+    <div>
+      <label for="singleChannel">Channel</label>
+      <input id="singleChannel" oninput="onChangeUpdate('singleChannel', 'singleChannelDisplay')()" type="range" min="1"
+        max="16" step="1" value="1">
+      <span id="singleChannelDisplay">1</span>
+    </div>
+    <div>
+      <label for="singleValue">Value</label>
+      <input id="singleValue" oninput="onChangeUpdate('singleValue', 'singleValueDisplay')()" type="range" min="0"
+        max="255" step="1" value="0">
+      <span id="singleValueDisplay">0</span>
+    </div>
+    <button onclick="sendSingleDMX('singleChannel', 'singleValue')()">Send</button>
+  </div>
 </body>
