@@ -1,6 +1,14 @@
 const server = "localhost:8080"
 const backendBaseUrl = `http://${server}/api/v1`
 
+/**
+ * Render feedback to 'feedback' element
+ * 
+ * @param {string} content 
+ */
+function feedback(content) {
+  document.getElementById('feedback').innerHTML = content;
+}
 
 /**
  * Returns a function that, upon invocation, reads the value of 'trigger' 
@@ -30,7 +38,6 @@ function onChangeUpdate(trigger, display) {
  * Example useage `onclick="sendSingleDMX('elementA', 'elementB')()"`
  */
 function sendSingleDMX(channelElementId, valueElementId) {
-  const feedbackEl = document.getElementById('feedback');
   const channelEl = document.getElementById(channelElementId)
   const valueEl = document.getElementById(valueElementId)
   const url = `${backendBaseUrl}/dmx`;
@@ -44,7 +51,7 @@ function sendSingleDMX(channelElementId, valueElementId) {
       body: JSON.stringify({ List: [{ channel, value }] }),
       method: "PATCH"
     })
-      .catch(() => feedbackEl.innerHTML = "ERROR!")
-      .then(() => feedbackEl.innerHTML = "SUCCESS!")
+      .catch(() => feedback("ERROR!"))
+      .then(() => feedback("SUCCESS!"))
   }
 }
