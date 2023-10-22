@@ -9,8 +9,8 @@ import (
 
 func createWriter() (writer *dmxusbpro.EnttecDMXUSBProController) {
 	opts := options.GetAppOptions()
-	if !opts.HasDMXWriter() {
-		log.Warnf("No port specified to WRITE to DMX - skipping")
+	if ok, objection := opts.CanWriteDMX(); !ok {
+		log.Warnf("%s - skipping", objection)
 		return
 	}
 	channels := opts.DmxChannelCount

@@ -17,13 +17,11 @@ type DMXBridge struct {
 }
 
 func NewDMXBridge(reader *dmxusbpro.EnttecDMXUSBProController, writer *dmxusbpro.EnttecDMXUSBProController) *DMXBridge {
-	if writer == nil {
-		log.Panicf("Writer is nil, cannot bridge.")
+	opts := options.GetAppOptions()
+	if ok, objection := opts.CanBridge(); !ok {
+		log.Panicf("%s, cannot bridge.", objection)
 	}
-	if reader == nil {
-		log.Panicf("Reader is nil, cannot bridge.")
-	}
-	channels := options.GetAppOptions().DmxChannelCount
+	channels := opts.DmxChannelCount
 	b := &DMXBridge{
 		isActive:     false,
 		foreignInput: make([]byte, channels+1),

@@ -53,10 +53,29 @@ func GetAppOptions() AppOptions {
 	return optionsInstance
 }
 
-func (opts *AppOptions) HasDMXWriter() bool {
-	return opts.DmxWritePort != ""
+func (opts *AppOptions) CanWriteDMX() (ok bool, objection string) {
+	if opts.DmxWritePort == "" {
+		return false, "No DMX writer specified"
+	}
+	return true, ""
 }
 
-func (opts *AppOptions) HasDMXReader() bool {
-	return opts.DmxReadPort != ""
+func (opts *AppOptions) CanReadDMX() (ok bool, objection string) {
+	if opts.DmxReadPort == "" {
+		return false, "No DMX reader specified"
+	}
+	return true, ""
+}
+
+func (opts *AppOptions) CanBridge() (ok bool, objection string) {
+	if !opts.DmxBridge {
+		return false, "DMX-Bridge flag is FALSE"
+	}
+	if ok, writeObj := opts.CanWriteDMX(); !ok {
+		return false, writeObj
+	}
+	if ok, readObj := opts.CanReadDMX(); !ok {
+		return false, readObj
+	}
+	return true, ""
 }

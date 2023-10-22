@@ -23,7 +23,7 @@ func GetBridge() *dmxbridge.DMXBridge {
 func Initialize() {
 	opts := options.GetAppOptions()
 	writer = createWriter()
-	if opts.HasDMXWriter() {
+	if ok, _ := opts.CanWriteDMX(); ok {
 		faderWriter = dmxfader.NewFadingWriter(writer)
 		faderWriter.Start()
 	}
@@ -39,7 +39,7 @@ func Shutdown() {
 	shutdownReader(reader)
 	shutdownWriter(writer)
 	opts := options.GetAppOptions()
-	if opts.HasDMXWriter() {
+	if ok, _ := opts.CanWriteDMX(); ok {
 		faderWriter.Stop()
 	}
 }

@@ -9,8 +9,8 @@ import (
 
 func createReader() (reader *dmxusbpro.EnttecDMXUSBProController) {
 	opts := options.GetAppOptions()
-	if !opts.HasDMXReader() {
-		log.Warnf("No port specified to READ from DMX - skipping")
+	if ok, objection := opts.CanReadDMX(); !ok {
+		log.Warnf("%s - skipping", objection)
 		return
 	}
 	channels := opts.DmxChannelCount
