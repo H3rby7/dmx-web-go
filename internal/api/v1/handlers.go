@@ -10,7 +10,6 @@ func RegisterHandlers(g *gin.RouterGroup) {
 	g.POST("dmx", dmxHandler)
 	g.POST("bridge/activate", bridgeActivateHandler)
 	g.POST("bridge/deactivate", bridgeDeactivateHandler)
-	g.POST("dmx/solo", dmxSoloHandler)
 }
 
 // Handle incoming dmx channel
@@ -22,22 +21,7 @@ func dmxHandler(c *gin.Context) {
 		c.AbortWithStatus(400)
 		return
 	}
-	dmx := dmxconn.GetWriter()
-	for _, entry := range data.List {
-		if err = dmx.Stage(entry.Channel, entry.Value); err != nil {
-			c.Error(err)
-		}
-	}
-	if len(c.Errors) != 0 {
-		c.AbortWithStatus(400)
-		return
-	}
-	err = dmx.Commit()
-	if err != nil {
-		c.Error(err)
-		c.AbortWithStatus(500)
-		return
-	}
+	dmxSetMulti(data)
 	c.String(200, "OK")
 }
 
@@ -47,10 +31,4 @@ func bridgeActivateHandler(c *gin.Context) {
 
 func bridgeDeactivateHandler(c *gin.Context) {
 	dmxconn.GetBridge().Deactivate()
-}
-
-// Clear all other DMX channels, except the ones sent
-func dmxSoloHandler(c *gin.Context) {
-	dmxconn.GetWriter().ClearStage()
-	dmxHandler(c)
 }
