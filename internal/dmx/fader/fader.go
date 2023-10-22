@@ -35,7 +35,9 @@ func (f *DMXFader) GetNextValue() byte {
 	}
 	stepsTillDeadline := deltaT / TICK_INTERVAL_MILLIS
 	deltaV := float32(f.targetValue) - f.currentValue
-	return byte(deltaV / float32(stepsTillDeadline))
+	nextValue := byte(f.currentValue + deltaV/float32(stepsTillDeadline))
+	log.Tracef("next value for channel '%d' is '%d'", f.channel, nextValue)
+	return nextValue
 }
 
 // Is this fader active, or already done?

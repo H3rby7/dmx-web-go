@@ -25,6 +25,12 @@ func NewFadingWriter(writer *dmxusbpro.EnttecDMXUSBProController) *FadingWriter 
 		writer:   writer,
 		faders:   make([]DMXFader, opts.DmxChannelCount),
 	}
+	for i := range f.faders {
+		f.faders[i] = DMXFader{
+			isActive: false,
+			channel:  int16(i),
+		}
+	}
 	f.GetUpdateFromWriter()
 	return f
 }
@@ -35,13 +41,11 @@ Get current stage from the writer and update internal faders with it
 A call to this function from the outside is only necessary, if the fading writer is not using the actual writer exclusively.
 */
 func (f *FadingWriter) GetUpdateFromWriter() {
+	log.Infof("Updating fader with values from writer stage")
 	stage := f.writer.GetStage()
-	for i := range f.faders {
-		f.faders[i] = DMXFader{
-			isActive:     false,
-			channel:      int16(i),
-			currentValue: float32(stage[i]),
-		}
+	for channel, fader := range f.faders {
+		log.Tracef("Updated channel '%v' to '%v'", channel, stage[channel])
+		fader.currentValue = float32(stage[channel])
 	}
 }
 
@@ -51,19 +55,28 @@ func (f *FadingWriter) FadeTo(channel int16, value byte, fadeDurationMillis int6
 }
 
 func (f *FadingWriter) Start() {
-	log.Infof("Started fading writer")
-	f.isActive = true
-	for f.isActive {
-		for i := range f.faders {
-			if f.faders[i].IsActive() {
-				f.writer.Stage(int16(i), f.faders[i].GetNextValue())
-			}
-		}
-		time.Sleep(time.Millisecond * TICK_INTERVAL_MILLIS)
-	}
-	log.Infof("Stopped fading writer")
+	go f.loop()
 }
 
 func (f *FadingWriter) Stop() {
 	f.isActive = false
+}
+
+func (f *FadingWriter) loop() {
+	log.Infof("Started fading writer")
+	f.isActive = true
+	for f.isActive {
+		dirty := false
+		for i := range f.faders {
+			if f.faders[i].IsActive() {
+				dirty = true
+				f.writer.Stage(int16(i), f.faders[i].GetNextValue())
+			}
+		}
+		if dirty {
+			f.writer.Commit()
+		}
+		time.Sleep(time.Millisecond * TICK_INTERVAL_MILLIS)
+	}
+	log.Infof("Stopped fading writer")
 }

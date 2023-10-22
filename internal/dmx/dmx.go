@@ -25,6 +25,7 @@ func Initialize() {
 	writer = createWriter()
 	writer.SetLogVerbosity(1)
 	faderWriter = dmxfader.NewFadingWriter(writer)
+	faderWriter.Start()
 	if opts.DmxReadPort != "" {
 		reader = initReader()
 		reader.SetLogVerbosity(1)
