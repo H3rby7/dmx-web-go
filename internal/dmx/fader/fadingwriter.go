@@ -73,11 +73,12 @@ func (f *FadingWriter) loop() {
 	log.Infof("Started fading writer")
 	f.isActive = true
 	for f.isActive {
+		// FLAG to help us detect if we need to write to DMX
 		dirty := false
 		for i := range f.faders {
 			if f.faders[i].IsActive() {
 				dirty = true
-				f.writer.Stage(int16(i), f.faders[i].GetNextValue())
+				f.writer.Stage(int16(i), f.faders[i].UpdateValue())
 			}
 		}
 		if dirty {
