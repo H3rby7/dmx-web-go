@@ -8,3 +8,26 @@ button {
   margin: 1em 0;
   cursor: pointer;
 }
+
+table {
+  border-collapse: collapse;
+}
+
+table th {
+  background-color: lightblue;
+}
+
+table td, table th {
+  border-style: solid;
+  padding: 0.2em 0.4em;
+}
+
+.scenes {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.scenes > div {
+  margin: 0 2em;
+}
