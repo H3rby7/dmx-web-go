@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	dmxconn "github.com/H3rby7/dmx-web-go/internal/dmx"
+	"github.com/H3rby7/dmx-web-go/internal/dmx"
 	"github.com/H3rby7/dmx-web-go/internal/options"
 	"github.com/H3rby7/dmx-web-go/internal/setup"
 
@@ -47,31 +47,6 @@ func handleShutdown(srv *http.Server) {
 	} else {
 		log.Infof("Server was shut down gracefully")
 	}
-
-	reader := dmxconn.GetReader()
-	if reader != nil {
-		log.Debugf("Shutting down DMX reader...")
-		if err := reader.Disconnect(); err != nil {
-			log.Fatal("Error disconnecting DMX reader:", err)
-		} else {
-			log.Infof("DMX reader was shut down gracefully")
-		}
-	}
-
-	log.Debugf("Shutting down DMX writer...")
-	w := dmxconn.GetWriter()
-	shouldClear := options.GetAppOptions().DmxClearOnQuit
-	if shouldClear {
-		log.Infof("Clearing DMX output to zeros")
-		w.ClearStage()
-		w.Commit()
-	} else {
-		log.Debugf("Skipping DMX output cleanup")
-	}
-	if err := w.Disconnect(); err != nil {
-		log.Fatal("Error disconnecting DMX writer:", err)
-	} else {
-		log.Infof("DMX writer was shut down gracefully")
-	}
+	dmx.Shutdown()
 	log.Infof("Finished cleaning up")
 }

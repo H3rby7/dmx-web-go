@@ -17,7 +17,11 @@ type DMXBridge struct {
 }
 
 func NewDMXBridge(reader *dmxusbpro.EnttecDMXUSBProController, writer *dmxusbpro.EnttecDMXUSBProController) *DMXBridge {
-	channels := options.GetAppOptions().DmxChannelCount
+	opts := options.GetAppOptions()
+	if ok, objection := opts.CanBridge(); !ok {
+		log.Panicf("%s, cannot bridge.", objection)
+	}
+	channels := opts.DmxChannelCount
 	b := &DMXBridge{
 		isActive:     false,
 		foreignInput: make([]byte, channels+1),
@@ -40,9 +44,6 @@ func (b *DMXBridge) Deactivate() {
 
 // Configure reader to 'changes only' and activate the bridge
 func (b *DMXBridge) BridgeDMX() {
-	if b.reader == nil {
-		log.Panicf("Reader is nil, cannot bridge.")
-	}
 	b.reader.SwitchReadMode(1)
 	c := make(chan messages.EnttecDMXUSBProApplicationMessage)
 	go b.reader.OnDMXChange(c, 15)

@@ -32,5 +32,9 @@ If running/debugging via VS-Code, make sure to pass the necessary flags as args 
 Pass value for a channel:
 
 ```sh
-curl -v -X POST -H "Content-Type: application/json" -d "{\"list\": [{\"channel\": 1, \"value\": 150}]}" http://localhost:8080/api/v1/dmx
+curl -v -X PATCH -H "Content-Type: application/json" -d "{\"list\": [{\"channel\": 1, \"value\": 150}]}" http://localhost:8080/api/v1/dmx
+
+curl -v -X PATCH -H "Content-Type: application/json" -d "{\"fadeTimeMillis\": 2500, \"scene\": {\"list\": [{\"channel\": 1, \"value\": 150}]}}" http://localhost:8080/api/v1/dmx/fade
+
+curl -v -X PUT http://localhost:8080/api/v1/dmx/clear
 ```
