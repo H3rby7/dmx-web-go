@@ -43,9 +43,9 @@ A call to this function from the outside is only necessary, if the fading writer
 func (f *FadingWriter) GetUpdateFromWriter() {
 	log.Infof("Updating fader with values from writer stage")
 	stage := f.writer.GetStage()
-	for channel, fader := range f.faders {
-		log.Tracef("Updated channel '%v' to '%v'", channel, stage[channel])
-		fader.currentValue = float32(stage[channel])
+	for i := range f.faders {
+		log.Tracef("Updated channel '%v' to '%v'", i, stage[i])
+		f.faders[i].currentValue = float32(stage[i])
 	}
 }
 
@@ -56,8 +56,8 @@ func (f *FadingWriter) FadeTo(channel int16, value byte, fadeDurationMillis int6
 
 // Immediately set all DMX values to 0
 func (f *FadingWriter) ClearAll() {
-	for _, fader := range f.faders {
-		fader.FadeTo(0, 0)
+	for i := range f.faders {
+		f.faders[i].FadeTo(0, 0)
 	}
 }
 
