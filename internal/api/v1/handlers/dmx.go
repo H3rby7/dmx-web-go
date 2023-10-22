@@ -3,11 +3,18 @@ package apiv1handlers
 import (
 	models "github.com/H3rby7/dmx-web-go/internal/api/v1/models"
 	services "github.com/H3rby7/dmx-web-go/internal/api/v1/services"
+	"github.com/H3rby7/dmx-web-go/internal/options"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 // Register Handlers for V1 API
 func RegisterDMXHandlers(g *gin.RouterGroup) {
+	opts := options.GetAppOptions()
+	if !opts.HasDMXWriter() {
+		logrus.Warnf("No DMX writer -> Skipping registration of write API")
+		return
+	}
 	g.PATCH("dmx", patchDmx)
 	g.PATCH("dmx/fade", patchDmxFade)
 	g.PUT("dmx/clear", putDmxClear)

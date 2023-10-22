@@ -19,6 +19,9 @@ type FadingWriter struct {
 
 // Create a new fading writer with the current DMX stage
 func NewFadingWriter(writer *dmxusbpro.EnttecDMXUSBProController) *FadingWriter {
+	if writer == nil {
+		log.Panicf("Writer is nil, cannot create FadingWriter.")
+	}
 	opts := options.GetAppOptions()
 	f := &FadingWriter{
 		isActive: false,

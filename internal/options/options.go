@@ -52,3 +52,11 @@ func InitAppOptions() {
 func GetAppOptions() AppOptions {
 	return optionsInstance
 }
+
+func (opts *AppOptions) HasDMXWriter() bool {
+	return opts.DmxWritePort != ""
+}
+
+func (opts *AppOptions) HasDMXReader() bool {
+	return opts.DmxReadPort != ""
+}

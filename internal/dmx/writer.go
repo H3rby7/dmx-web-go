@@ -7,8 +7,12 @@ import (
 	"github.com/tarm/serial"
 )
 
-func createWriter() *dmxusbpro.EnttecDMXUSBProController {
+func createWriter() (writer *dmxusbpro.EnttecDMXUSBProController) {
 	opts := options.GetAppOptions()
+	if !opts.HasDMXWriter() {
+		log.Warnf("No port specified to WRITE to DMX - skipping")
+		return
+	}
 	channels := opts.DmxChannelCount
 	port := opts.DmxWritePort
 	baud := opts.DmxWriteBaudrate
@@ -16,7 +20,7 @@ func createWriter() *dmxusbpro.EnttecDMXUSBProController {
 	config := &serial.Config{Name: port, Baud: baud}
 
 	// Create a controller and connect to it
-	writer := dmxusbpro.NewEnttecDMXUSBProController(config, channels, true)
+	writer = dmxusbpro.NewEnttecDMXUSBProController(config, channels, true)
 	writer.SetLogVerbosity(logVerbosity())
 	if err := writer.Connect(); err != nil {
 		log.Fatalf("Failed to connect DMX Controller for WRITING: %s", err)
@@ -25,18 +29,20 @@ func createWriter() *dmxusbpro.EnttecDMXUSBProController {
 }
 
 func shutdownWriter(writer *dmxusbpro.EnttecDMXUSBProController) {
-	log.Debugf("Shutting down DMX writer...")
-	shouldClear := options.GetAppOptions().DmxClearOnQuit
-	if shouldClear {
-		log.Infof("Clearing DMX output to zeros")
-		writer.ClearStage()
-		writer.Commit()
-	} else {
-		log.Debugf("Skipping DMX output cleanup")
-	}
-	if err := writer.Disconnect(); err != nil {
-		log.Fatal("Error disconnecting DMX writer:", err)
-	} else {
-		log.Infof("DMX writer was shut down gracefully")
+	if writer != nil {
+		log.Debugf("Shutting down DMX writer...")
+		shouldClear := options.GetAppOptions().DmxClearOnQuit
+		if shouldClear {
+			log.Infof("Clearing DMX output to zeros")
+			writer.ClearStage()
+			writer.Commit()
+		} else {
+			log.Debugf("Skipping DMX output cleanup")
+		}
+		if err := writer.Disconnect(); err != nil {
+			log.Fatal("Error disconnecting DMX writer:", err)
+		} else {
+			log.Infof("DMX writer was shut down gracefully")
+		}
 	}
 }

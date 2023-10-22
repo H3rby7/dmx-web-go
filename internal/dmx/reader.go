@@ -7,14 +7,14 @@ import (
 	"github.com/tarm/serial"
 )
 
-func initReader() (reader *dmxusbpro.EnttecDMXUSBProController) {
+func createReader() (reader *dmxusbpro.EnttecDMXUSBProController) {
 	opts := options.GetAppOptions()
-	channels := opts.DmxChannelCount
-	port := opts.DmxReadPort
-	if port == "" {
+	if !opts.HasDMXReader() {
 		log.Warnf("No port specified to READ from DMX - skipping")
 		return
 	}
+	channels := opts.DmxChannelCount
+	port := opts.DmxReadPort
 	baud := opts.DmxReadBaudrate
 	log.Infof("Opening DMX Serial for READING using port %s", port)
 	config := &serial.Config{Name: port, Baud: baud}
