@@ -54,6 +54,13 @@ func (f *FadingWriter) FadeTo(channel int16, value byte, fadeDurationMillis int6
 	f.faders[channel].FadeTo(value, fadeDurationMillis)
 }
 
+// Immediately set all DMX values to 0
+func (f *FadingWriter) ClearAll() {
+	for _, fader := range f.faders {
+		fader.FadeTo(0, 0)
+	}
+}
+
 func (f *FadingWriter) Start() {
 	go f.loop()
 }
