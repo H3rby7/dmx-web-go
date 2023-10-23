@@ -8,6 +8,7 @@ import (
 
 type AppOptions struct {
 	HttpPort         string
+	Static           string
 	LogLevel         log.Level
 	DmxChannelCount  int
 	DmxWritePort     string
@@ -25,6 +26,7 @@ var optionsInstance = AppOptions{}
 func InitAppOptions() {
 	var err error
 	httpPort := flag.String("http-port", "8080", "HTTP Server port")
+	static := flag.String("static", "", "Relative path for static file serving. Leave blank for no serving.")
 	dmxChannels := flag.Int("dmx-channels", 512, "DMX channel count. Lower count saves some energy as less needs to be sent")
 	dmxReadBaudrate := flag.Int("dmx-read-baud", 57600, "Baudrate for the reading device")
 	dmxReadPort := flag.String("dmx-read-port", "", "Input interface (e.g. COM4 OR /dev/tty.usbserial)")
@@ -35,6 +37,7 @@ func InitAppOptions() {
 	logLevel := flag.String("log-level", "info", "Granularity of log output, see logrus.ParseLevel")
 	flag.Parse()
 	optionsInstance.HttpPort = *httpPort
+	optionsInstance.Static = *static
 	optionsInstance.DmxChannelCount = *dmxChannels
 	optionsInstance.DmxReadBaudrate = *dmxReadBaudrate
 	optionsInstance.DmxReadPort = *dmxReadPort

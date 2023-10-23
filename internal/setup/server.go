@@ -19,7 +19,9 @@ func SetUpAndStartServer() *http.Server {
 	opts := options.GetAppOptions()
 
 	router := gin.Default()
-	router.Static("", "./www")
+	if opts.Static != "" {
+		router.Static("", opts.Static)
+	}
 	apiv1.RegisterHandlers(router.Group("/api/v1"))
 	addr := ":" + opts.HttpPort
 	srv := &http.Server{
