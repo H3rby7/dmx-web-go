@@ -65,8 +65,8 @@ function fadeMultipleDMX(dmxList, fadeTimeMillis = 1) {
     body: JSON.stringify({ fadeTimeMillis: fadeTimeMillis, scene: {list: dmxList }}),
     method: "PATCH"
   })
-    .catch(() => feedback("ERROR!"))
-    .then(() => feedback("SUCCESS!"))
+  .then(() => feedback("SUCCESS!"))
+  .catch(() => feedback("ERROR!"));
 }
 
 // Channels used for dimming lights
