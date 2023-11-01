@@ -35,7 +35,7 @@ func NewDMXBridge(reader *dmxusbpro.EnttecDMXUSBProController, writer *dmxfader.
 // Start passing on any data that is read
 func (b *DMXBridge) Activate() {
 	b.isActive = true
-	b.Update()
+	b.UpdateAll()
 }
 
 // Stop passing on data that is read
@@ -55,14 +55,14 @@ func (b *DMXBridge) BridgeDMX() {
 		} else {
 			for k, v := range cs {
 				b.foreignInput[k] = v
+				b.writer.FadeTo(int16(k), v, dmxfader.FADE_IMMEDIATELY)
 			}
-			b.Update()
 		}
 	}
 }
 
-// Update the writer with stored values, if bridge is active
-func (b *DMXBridge) Update() {
+// Update the writer with ALL stored values, if bridge is active
+func (b *DMXBridge) UpdateAll() {
 	if !b.isActive {
 		log.Debugf("Skipping update, because bridge is not active")
 		return
