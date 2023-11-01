@@ -5,6 +5,7 @@ Offers simplistic API and converts calls into DMX commands.
 - [DMX Webserver](#dmx-webserver)
 - [Running](#running)
   - [Example CURLs](#example-curls)
+  - [Example WWW](#example-www)
 
 # Running
 
@@ -37,4 +38,12 @@ curl -v -X PATCH -H "Content-Type: application/json" -d "{\"list\": [{\"channel\
 curl -v -X PATCH -H "Content-Type: application/json" -d "{\"fadeTimeMillis\": 2500, \"scene\": {\"list\": [{\"channel\": 1, \"value\": 150}]}}" http://localhost:8080/api/v1/dmx/fade
 
 curl -v -X PUT http://localhost:8080/api/v1/dmx/clear
+```
+
+## Example WWW
+
+Run with `-static ./www` as example to also have a static file server, serving a demo page.
+
+```sh
+go run cmd\dmxweb\dmxweb.go -dmx-write-port COM5 -log-level debug -static ./www
 ```

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <title>DMX HTML Example</title>
+  <script src="scripts.js"></script>
+  <link href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+  <div>
+    <h1>HTML Example</h1>
+  </div>
+  <div>
+    <span id="feedback"></span>
+  </div>
+  <div>
+    <h2>Simple DMX Request</h2>
+    <div>
+      <label for="singleChannel">Channel</label>
+      <input id="singleChannel" oninput="onChangeUpdate('singleChannel', 'singleChannelDisplay')()" type="range" min="1"
+        max="16" step="1" value="1">
+      <span id="singleChannelDisplay">1</span>
+    </div>
+    <div>
+      <label for="singleValue">Value</label>
+      <input id="singleValue" oninput="onChangeUpdate('singleValue', 'singleValueDisplay')()" type="range" min="0"
+        max="255" step="1" value="0">
+      <span id="singleValueDisplay">0</span>
+    </div>
+    <button onclick="sendSingleDMX('singleChannel', 'singleValue')()">Send</button>
+  </div>
+  <div>
+    <h2>DMX Scene Example</h2>
+    <h3>Dimmer Channels</h3>
+    <p>We assume simple dimmers from 1 to 4</p>
+    <p>We assume RGB + dimmer: e.G. Starting at channel 5 (R), 6 (G), 7 (B) and dimmer at (8)</p>
+    <p>So we end up with dimmers at channels: [1,2,3,4,8]</p>
+    <h3>Other Channels</h3>
+    <p>Other channels, for example 'RGB' or color-wheel channels also need to be set, however you probably do not want to 'fade them in'.</p>
+    <p>For example 'fading in' a pan or rotation channel together with the dimmer, would move your light as it comes up</p>
+    <h3>Scenes</h3>
+    <p>Lets assume 'Scenes', basically a set of channels at given values</p>
+
+    <div class="scenes">
+      <div>
+        <h4>Scene A</h4>
+        <table>
+          <thead>
+            <tr><th>Channel</th><th>Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>50</td></tr>
+            <tr><td>2</td><td>100</td></tr>
+            <tr><td>3</td><td>150</td></tr>
+          </tbody>
+        </table>
+        <p>meaning dimmers 4 and 8 should be 0</p>
+        <button onclick="switchToScene(sceneA)">Switch here</button>
+      </div>
+      <div>
+        <h4>Scene B</h4>
+        <table>
+          <thead>
+            <tr><th>Channel</th><th>Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>150</td></tr>
+            <tr><td>4</td><td>200</td></tr>
+          </tbody>
+        </table>
+        <p>meaning dimmers 2, 3 and 8 should be 0</p>
+        <button onclick="switchToScene(sceneB)">Switch here</button>
+      </div>
+      <div>
+        <h4>Scene C</h4>
+        <table>
+          <thead>
+            <tr><th>Channel</th><th>Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>5 (R)</td><td>255</td></tr>
+            <tr><td>6 (G)</td><td>255</td></tr>
+            <tr><td>7 (B)</td><td>255</td></tr>
+            <tr><td>8 (DIM)</td><td>50</td></tr>
+          </tbody>
+        </table>
+        <p>meaning dimmers 1, 2, 3 and 4 should be 0</p>
+        <p>want to set channels 5, 6 and 7 before dimming up</p>
+        <button onclick="switchToScene(sceneC)">Switch here</button>
+      </div>
+    </div>
+
+  </div>
+</body>
