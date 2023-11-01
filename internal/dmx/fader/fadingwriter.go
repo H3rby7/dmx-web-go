@@ -11,6 +11,9 @@ import (
 // 25 per second
 const TICK_INTERVAL_MILLIS = 1000 / 25
 
+// A value of 1 millisecond results in immediate fading
+const FADE_IMMEDIATELY = 1
+
 type FadingWriter struct {
 	isActive bool
 	writer   *dmxusbpro.EnttecDMXUSBProController

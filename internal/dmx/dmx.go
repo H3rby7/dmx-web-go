@@ -29,7 +29,7 @@ func Initialize() {
 	}
 	reader = createReader()
 	if opts.DmxBridge {
-		bridge = dmxbridge.NewDMXBridge(reader, writer)
+		bridge = dmxbridge.NewDMXBridge(reader, faderWriter)
 		bridge.Activate()
 		go bridge.BridgeDMX()
 	}

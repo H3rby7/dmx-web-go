@@ -1,6 +1,7 @@
 package dmxbridge
 
 import (
+	dmxfader "github.com/H3rby7/dmx-web-go/internal/dmx/fader"
 	"github.com/H3rby7/dmx-web-go/internal/options"
 	"github.com/H3rby7/usbdmx-golang/controller/enttec/dmxusbpro"
 	"github.com/H3rby7/usbdmx-golang/controller/enttec/dmxusbpro/messages"
@@ -13,10 +14,10 @@ type DMXBridge struct {
 	// Holds DMX data, as DMX starts with channel '1' the index '0' is unused.
 	foreignInput []byte
 	reader       *dmxusbpro.EnttecDMXUSBProController
-	writer       *dmxusbpro.EnttecDMXUSBProController
+	writer       *dmxfader.FadingWriter
 }
 
-func NewDMXBridge(reader *dmxusbpro.EnttecDMXUSBProController, writer *dmxusbpro.EnttecDMXUSBProController) *DMXBridge {
+func NewDMXBridge(reader *dmxusbpro.EnttecDMXUSBProController, writer *dmxfader.FadingWriter) *DMXBridge {
 	opts := options.GetAppOptions()
 	if ok, objection := opts.CanBridge(); !ok {
 		log.Panicf("%s, cannot bridge.", objection)
@@ -68,7 +69,6 @@ func (b *DMXBridge) Update() {
 	}
 	log.Debugf("Updating with %v", b.foreignInput)
 	for i := range b.foreignInput {
-		b.writer.Stage(int16(i), b.foreignInput[i])
+		b.writer.FadeTo(int16(i), b.foreignInput[i], dmxfader.FADE_IMMEDIATELY)
 	}
-	b.writer.Commit()
 }
