@@ -60,6 +60,11 @@ func (f *FadingWriter) GetUpdateFromWriter() {
 
 // Fade a given channel to a given value over a given duration
 func (f *FadingWriter) FadeTo(channel int16, value byte, fadeDurationMillis int64) {
+	highestChannel := int16(len(f.faders))
+	if channel < 1 || channel > highestChannel {
+		log.Errorf("Skipping update for channel '%d', because it is out of range, must be between 1 and %d", channel, highestChannel)
+		return
+	}
 	f.faders[channel].FadeTo(value, fadeDurationMillis)
 }
 
