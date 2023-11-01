@@ -14,6 +14,9 @@ const TICK_INTERVAL_MILLIS = 1000 / 25
 // A value of 1 millisecond results in immediate fading
 const FADE_IMMEDIATELY = 1
 
+/*
+DMX Writer that takes care of fading channels to the desired values over time.
+*/
 type FadingWriter struct {
 	isActive bool
 	writer   *dmxusbpro.EnttecDMXUSBProController
@@ -67,14 +70,17 @@ func (f *FadingWriter) ClearAll() {
 	}
 }
 
+// Start a go-routine that runs the update loop
 func (f *FadingWriter) Start() {
 	go f.loop()
 }
 
+// Stop the update loop go-routine
 func (f *FadingWriter) Stop() {
 	f.isActive = false
 }
 
+// Blocking loop that calculates a nd runs updates on the faders.
 func (f *FadingWriter) loop() {
 	log.Infof("Started fading writer")
 	f.isActive = true
