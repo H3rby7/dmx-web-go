@@ -23,4 +23,6 @@ func RegisterHandlers(g *gin.RouterGroup) {
 		log.Warnf("%s -> Skipping registration of 'DMX' API", objection)
 	}
 
+	apiv1handlers.RegisterTriggerHandlers(g)
+
 }

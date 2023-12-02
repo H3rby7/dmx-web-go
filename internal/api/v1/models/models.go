@@ -32,3 +32,7 @@ type MultipleDMXValueForChannelWithFade struct {
 
 // Alias for MultipleDMXValueForChannelWithFade
 type SceneWithFade = MultipleDMXValueForChannelWithFade
+
+type TriggerSource struct {
+	Source string `json:"source"`
+}

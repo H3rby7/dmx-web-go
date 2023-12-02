@@ -23,3 +23,10 @@ Set all DMX values to 0 immediately
 func ClearAll() {
 	dmx.GetFader().ClearAll()
 }
+
+/*
+Print hello
+*/
+func PrintHello() {
+	log.Debugf("hello")
+}
