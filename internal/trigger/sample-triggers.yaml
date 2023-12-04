@@ -1,0 +1,30 @@
+###################################################################
+### Example (prototype) of what a trigger file could look like  ###
+###################################################################
+
+triggers:
+  # Name for this trigger
+  - name: my-sample-trigger
+    # The sequence with delay times
+    chase:
+      - delayTimeMillis: 0 # This happens immediately
+        bridgeActive: false # disable the DMX bridge
+        fadeTimeMillis: 500 # Time to fade in milliseconds
+        # The scene content
+        scene:
+          list:
+            - channel: 1
+              value: 255
+            - channel: 2
+              value: 255
+      - delayTimeMillis: 500 # This happens 500ms after the previous item was STARTED
+        fadeTimeMillis: 500
+        scene:
+          list:
+            - channel: 1
+              value: 100
+            - channel: 2
+              value: 100
+      - delayTimeMillis: 1500 # Happens 1,5s after the previous item has started
+        bridgeActive: true
+        fadeTimeMillis: 500
