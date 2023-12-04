@@ -26,5 +26,5 @@ triggers:
             - channel: 2
               value: 100
       - delayTimeMillis: 1500 # Happens 1,5s after the previous item has started
-        bridgeActive: true
-        fadeTimeMillis: 500
+        bridgeActive: true # enable the DMX bridge
+        fadeTimeMillis: 500 # Time to fade back to the bridge
