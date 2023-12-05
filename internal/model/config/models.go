@@ -1,17 +1,30 @@
-package trigger
-
-import apiv1models "github.com/H3rby7/dmx-web-go/internal/api/v1/models"
+package models_config
 
 /*
-	File containing the chases and their triggers
+	Struct holding a channel and a value for that channel.
 */
-type ActionsFile struct {
-	Triggers []Trigger `yaml:"triggers" binding:"required"`
-	Chases   []Chase   `yaml:"chases" binding:"required"`
+type DMXValueForChannel struct {
+	Channel int16 `yaml:"channel" binding:"required"`
+	Value   byte  `yaml:"value" binding:"required"`
 }
 
 /*
-	A mapping of trigger source UID to trigger name
+	Struct holding a list of channels and their values
+*/
+type Scene struct {
+	List []DMXValueForChannel `yaml:"list"`
+}
+
+/*
+File containing the chases and their triggers
+*/
+type ConfigFile struct {
+	Triggers []Trigger `yaml:"triggers"`
+	Chases   []Chase   `yaml:"chases"`
+}
+
+/*
+A mapping of trigger source UID to trigger name
 */
 type Trigger struct {
 	// Source, as key to map to a trigger
@@ -21,10 +34,10 @@ type Trigger struct {
 }
 
 /*
-	A Chase (chain of actions).
+External representation of a Chase (chain of actions).
 */
 type Chase struct {
-	// Name for this trigger - mus be unique
+	// Name for this chase - must be unique
 	Name string `yaml:"name" binding:"required"`
 	// The sequence of actions (chase) to take.
 	Chase []ChaseElement `yaml:"chase" binding:"required"`
@@ -49,7 +62,7 @@ type ChaseElement struct {
 
 		Default: no scene
 	*/
-	Scene apiv1models.Scene `yaml:"scene"`
+	Scene Scene `yaml:"scene"`
 	/*
 		Fade time in millis for the change.
 

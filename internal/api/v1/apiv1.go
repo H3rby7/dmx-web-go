@@ -2,14 +2,14 @@ package apiv1
 
 import (
 	apiv1handlers "github.com/H3rby7/dmx-web-go/internal/api/v1/handlers"
-	apiv1services "github.com/H3rby7/dmx-web-go/internal/api/v1/services"
 	"github.com/H3rby7/dmx-web-go/internal/options"
+	"github.com/H3rby7/dmx-web-go/internal/services/trigger"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
 // Register Handlers for V1 API
-func RegisterHandlers(g *gin.RouterGroup) {
+func RegisterHandlers(g *gin.RouterGroup, triggerSvc *trigger.TriggerService) {
 	opts := options.GetAppOptions()
 
 	if ok, objection := opts.CanBridge(); ok {
@@ -24,7 +24,6 @@ func RegisterHandlers(g *gin.RouterGroup) {
 		log.Warnf("%s -> Skipping registration of 'DMX' API", objection)
 	}
 
-	triggerSrv := apiv1services.NewTriggerService()
-	apiv1handlers.RegisterTriggerHandlers(g, triggerSrv)
+	apiv1handlers.RegisterTriggerHandlers(g, triggerSvc)
 
 }

@@ -1,13 +1,14 @@
-package trigger
+package config
 
 import (
 	"fmt"
 
-	"github.com/H3rby7/dmx-web-go/internal/shared/validation"
+	models_config "github.com/H3rby7/dmx-web-go/internal/model/config"
+	"github.com/H3rby7/dmx-web-go/internal/model/validation"
 )
 
 // Validates that the field Name contains a reasonable value
-func (chase Chase) validateName() (ok bool, error validation.ValidationError) {
+func validateName(chase models_config.Chase) (ok bool, error validation.ValidationError) {
 	ok = true
 	if chase.Name == "" {
 		ok = false
@@ -19,7 +20,7 @@ func (chase Chase) validateName() (ok bool, error validation.ValidationError) {
 }
 
 // Validates that the Name is unique
-func validateNameUniqueness(triggers []Chase) (ok bool, errors []validation.ValidationError) {
+func validateNameUniqueness(triggers []models_config.Chase) (ok bool, errors []validation.ValidationError) {
 	ok = true
 	usedNames := make(map[string]bool)
 	for _, chase := range triggers {
@@ -42,10 +43,10 @@ ok = true => no errors found
 
 ok = false => errors field contains the validation errors
 */
-func ValidateFile(file ActionsFile) (ok bool, errors []validation.ValidationError) {
+func ValidateFile(file models_config.ConfigFile) (ok bool, errors []validation.ValidationError) {
 	ok = true
 	for _, chase := range file.Chases {
-		if _ok, err := chase.validateName(); !_ok {
+		if _ok, err := validateName(chase); !_ok {
 			ok = false
 			errors = append(errors, err)
 		}

@@ -1,4 +1,4 @@
-package apiv1models
+package apiv1dtos
 
 /*
 	Struct holding a channel and a value for that channel.

@@ -1,20 +1,20 @@
 package apiv1handlers
 
 import (
-	models "github.com/H3rby7/dmx-web-go/internal/api/v1/models"
-	services "github.com/H3rby7/dmx-web-go/internal/api/v1/services"
+	dtos "github.com/H3rby7/dmx-web-go/internal/api/v1/dtos"
+	"github.com/H3rby7/dmx-web-go/internal/services/trigger"
 	"github.com/gin-gonic/gin"
 )
 
 // Register Handlers for V1 API
-func RegisterTriggerHandlers(g *gin.RouterGroup, svc *services.TriggerService) {
+func RegisterTriggerHandlers(g *gin.RouterGroup, svc *trigger.TriggerService) {
 	g.POST("trigger", createTriggerHandler(svc))
 }
 
 // Handle triggers from ?
-func createTriggerHandler(svc *services.TriggerService) gin.HandlerFunc {
+func createTriggerHandler(svc *trigger.TriggerService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		tr := models.TriggerSource{}
+		tr := dtos.TriggerSource{}
 		err := c.BindJSON(&tr)
 		if err != nil {
 			c.Error(err)

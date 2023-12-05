@@ -1,8 +1,8 @@
-package apiv1services
+package services
 
 import (
-	models "github.com/H3rby7/dmx-web-go/internal/api/v1/models"
 	"github.com/H3rby7/dmx-web-go/internal/dmx"
+	models_scene "github.com/H3rby7/dmx-web-go/internal/model/scene"
 	"github.com/H3rby7/dmx-web-go/internal/options"
 	log "github.com/sirupsen/logrus"
 )
@@ -10,7 +10,7 @@ import (
 /*
 Apply DMX values immediately to multiple channels
 */
-func SetScene(data models.Scene, fadeDurationMillis int64) {
+func SetScene(data models_scene.Scene, fadeDurationMillis int64) {
 	opts := options.GetAppOptions()
 	if ok, objection := opts.CanWriteDMX(); !ok {
 		log.Warnf("%s -> Cannot set scene", objection)
