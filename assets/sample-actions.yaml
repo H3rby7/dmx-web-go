@@ -1,9 +1,12 @@
 ###################################################################
 ### Example (prototype) of what a trigger file could look like  ###
 ###################################################################
-
 triggers:
-  # Name for this trigger
+  - source: "35406887899400"
+    chase: my-sample-trigger
+
+chases:
+  # Name for this chase
   - name: my-sample-trigger
     # The sequence with delay times
     chase:
