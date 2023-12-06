@@ -45,14 +45,3 @@ func putDmxClear(c *gin.Context) {
 	services.ClearAll()
 	c.String(200, "OK")
 }
-
-// Extract a Scene strcut from the gin request
-func sceneFromJson(c *gin.Context) (s dtos.Scene, err error) {
-	s = dtos.Scene{}
-	err = c.BindJSON(&s)
-	if err != nil {
-		c.Error(err)
-		c.AbortWithStatus(400)
-	}
-	return
-}
