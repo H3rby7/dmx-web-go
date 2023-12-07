@@ -26,8 +26,7 @@ func NewTriggerService(configService *config.ConfigService, chaseService *chase.
 Handle an incoming trigger
 */
 func (svc *TriggerService) Handle(source string) (ok bool) {
-	ll := log.WithField("source", source)
-	ll.Infof("Handling incoming trigger")
+	log.WithField("source", source).Infof("Handling incoming trigger")
 	ok, chase := svc.mapToChaseName(source)
 	if ok {
 		svc.chaseService.StartChaseFromTheTop(chase)
@@ -38,13 +37,13 @@ func (svc *TriggerService) Handle(source string) (ok bool) {
 func (svc *TriggerService) mapToChaseName(source string) (ok bool, chaseName string) {
 	ll := log.WithField("source", source)
 
-	ll.Debugf("Mapping to chase name")
+	ll.Debugf("Mapping trigger source to chase")
 	ok = false
 	for _, m := range svc.triggers {
 		if m.Source == source {
 			ok = true
 			chaseName = m.Chase
-			ll.Debugf("Matched trigger with name '%s'", source)
+			ll.Debugf("Matched trigger to chase with name '%s'", chaseName)
 			return
 		}
 	}

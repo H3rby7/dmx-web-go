@@ -36,12 +36,12 @@ func mapScene(in models_config.Scene) models_scene.Scene {
 }
 
 /*
-Map ChaseElement
+Map Step
 
 From CONFIG models to CHASE models
 */
-func mapChaseElement(in models_config.ChaseElement) models_chase.ChaseElement {
-	return models_chase.ChaseElement{
+func mapStep(in models_config.Step) models_chase.Step {
+	return models_chase.Step{
 		DelayTimeMillis: in.DelayTimeMillis,
 		BridgeActive:    in.BridgeActive,
 		FadeTimeMillis:  in.FadeTimeMillis,
@@ -55,9 +55,9 @@ Map Chase
 From CONFIG models to CHASE models
 */
 func mapChase(in models_config.Chase) models_chase.Chase {
-	chaseList := make([]models_chase.ChaseElement, 0, len(in.Chase))
+	chaseList := make([]models_chase.Step, 0, len(in.Chase))
 	for _, v := range in.Chase {
-		chaseList = append(chaseList, mapChaseElement(v))
+		chaseList = append(chaseList, mapStep(v))
 	}
 	return models_chase.Chase{
 		Name:  in.Name,

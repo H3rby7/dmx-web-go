@@ -2,6 +2,7 @@ package chase
 
 import (
 	models_chase "github.com/H3rby7/dmx-web-go/internal/model/chase"
+	models_scene "github.com/H3rby7/dmx-web-go/internal/model/scene"
 	"github.com/H3rby7/dmx-web-go/internal/services"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
 	log "github.com/sirupsen/logrus"
@@ -27,25 +28,25 @@ func (svc *ChaseService) StartChaseFromTheTop(chaseName string) (ok bool) {
 	ll := log.WithField("chase", chaseName)
 	ok, chase := svc.findChaseByName(chaseName)
 	if !ok {
+		ll.Warnf("Could not find chase")
 		return
 	}
-	ll.Warnf("Work-In-Progress - Only setting first scene of chase!")
-	wip := chase.Chase[0]
-	services.SetScene(wip.Scene, wip.FadeTimeMillis)
+	ll.Debugf("Found chase")
+	chase.RunFromStart(func(scene models_scene.Scene, fadeTimeMillis int64) {
+		ll.Debugf("Rendering... ")
+		services.SetScene(scene, fadeTimeMillis)
+	})
 	return
 }
 
 func (svc *ChaseService) findChaseByName(chaseName string) (ok bool, chase models_chase.Chase) {
-	ll := log.WithField("chase", chaseName)
 	ok = false
 	for _, c := range svc.chases {
 		if c.Name == chaseName {
-			ll.Debugf("Returning chase with name '%s'", chaseName)
 			ok = true
 			chase = c
 			return
 		}
 	}
-	ll.Warnf("Could not find chase with name '%s'", chaseName)
 	return
 }
