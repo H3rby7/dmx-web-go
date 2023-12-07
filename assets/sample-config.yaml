@@ -31,3 +31,9 @@ chases:
       - delayTimeMillis: 1500 # Happens 1,5s after the previous item has started
         bridgeActive: true # enable the DMX bridge
         fadeTimeMillis: 500 # Time to fade back to the bridge
+        scene:
+          list:
+            - channel: 1
+              value: 0
+            - channel: 2
+              value: 0
