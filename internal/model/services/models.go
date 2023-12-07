@@ -17,6 +17,5 @@ type ApplicationServices struct {
 	ConfigService    *config.ConfigService
 	FadingService    *fading.FadingService
 	DMXReaderService *dmx.DMXReaderService
-	DMXWriterService *dmx.DMXWriterService
 	TriggerService   *trigger.TriggerService
 }

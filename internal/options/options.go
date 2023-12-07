@@ -10,6 +10,7 @@ type AppOptions struct {
 	HttpPort         string
 	Static           string
 	LogLevel         log.Level
+	DmxLogLevel      uint8
 	DmxChannelCount  int
 	DmxWritePort     string
 	DmxWriteBaudrate int
@@ -34,6 +35,7 @@ func InitAppOptions() {
 	dmxWritePort := flag.String("dmx-write-port", "", "Output interface (e.g. COM4 OR /dev/tty.usbserial)")
 	dmxClearOnQuit := flag.Bool("dmx-clear-on-quit", true, "Whether or not to send '0's out for all DMX channels upon exit.")
 	dmxBridge := flag.Bool("dmx-bridge", false, "Whether or not to send the read input into write upon receiving.")
+	dmxLogLevel := flag.Uint("dmx-log-level", 0, "Granularity of DMX logs [0,1,2]")
 	logLevel := flag.String("log-level", "info", "Granularity of log output, see logrus.ParseLevel")
 	flag.Parse()
 	optionsInstance.HttpPort = *httpPort
@@ -45,6 +47,7 @@ func InitAppOptions() {
 	optionsInstance.DmxWritePort = *dmxWritePort
 	optionsInstance.DmxClearOnQuit = *dmxClearOnQuit
 	optionsInstance.DmxBridge = *dmxBridge
+	optionsInstance.DmxLogLevel = uint8(*dmxLogLevel)
 	optionsInstance.LogLevel, err = log.ParseLevel(*logLevel)
 	if err != nil {
 		optionsInstance.LogLevel = log.InfoLevel

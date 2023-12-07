@@ -17,11 +17,6 @@ type DMXReaderService struct {
 //
 // Connects to an [EnttecDMXUSBProController] using the Port specified in [AppOptions]
 func NewDMXReaderService() (service *DMXReaderService) {
-	opts := options.GetAppOptions()
-	if ok, objection := opts.CanReadDMX(); !ok {
-		log.Warnf("%s - skipping", objection)
-		return
-	}
 	service = &DMXReaderService{}
 	service.ConnectDMX()
 	return
@@ -46,7 +41,7 @@ func (s *DMXReaderService) ConnectDMX() {
 
 	// Create a controller and connect to it
 	reader := dmxusbpro.NewEnttecDMXUSBProController(config, channels, false)
-	reader.SetLogVerbosity(logVerbosity())
+	reader.SetLogVerbosity(opts.DmxLogLevel)
 	if err := reader.Connect(); err != nil {
 		log.Fatalf("Failed to connect DMX Controller for READING: %s", err)
 		return

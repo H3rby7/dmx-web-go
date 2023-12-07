@@ -20,10 +20,17 @@ func InitServices() *models_services.ApplicationServices {
 	services := &models_services.ApplicationServices{}
 	opts := options.GetAppOptions()
 
-	services.DMXReaderService = dmx.NewDMXReaderService()
-	services.DMXWriterService = dmx.NewDMXWriterService()
-	services.FadingService = fading.NewFadingService(services.DMXWriterService)
-	services.FadingService.Start()
+	if ok, objection := opts.CanReadDMX(); !ok {
+		services.DMXReaderService = dmx.NewDMXReaderService()
+	} else {
+		log.Warnf("%s - skipping DMX Reader Creation", objection)
+	}
+
+	if ok, objection := opts.CanWriteDMX(); !ok {
+		services.FadingService = fading.NewFadingService()
+	} else {
+		log.Warnf("%s - Skipping DMX Writer Creation", objection)
+	}
 
 	if opts.DmxBridge {
 		if ok, objection := opts.CanBridge(); ok {

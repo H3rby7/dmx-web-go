@@ -6,45 +6,42 @@ import (
 	models_fader "github.com/H3rby7/dmx-web-go/internal/model/fader"
 	models_scene "github.com/H3rby7/dmx-web-go/internal/model/scene"
 	"github.com/H3rby7/dmx-web-go/internal/options"
-	"github.com/H3rby7/dmx-web-go/internal/services/dmx"
+	"github.com/H3rby7/usbdmx-golang/controller/enttec/dmxusbpro"
 	log "github.com/sirupsen/logrus"
+	"github.com/tarm/serial"
 )
 
 // DMX Writer that takes care of fading channels to the desired values over time.
 type FadingService struct {
 	isActive bool
-	writer   *dmx.DMXWriterService
+	writer   *dmxusbpro.EnttecDMXUSBProController
 	faders   []models_fader.DMXFader
 }
 
 // Create a new fading writer with the current DMX stage
-func NewFadingService(writer *dmx.DMXWriterService) *FadingService {
-	if writer == nil {
-		log.Panicf("Writer is nil, cannot create FadingWriter.")
-	}
+func NewFadingService() *FadingService {
 	opts := options.GetAppOptions()
 	f := &FadingService{
 		isActive: false,
-		writer:   writer,
 		faders:   make([]models_fader.DMXFader, opts.DmxChannelCount+1),
 	}
+	f.ConnectDMX()
 	for i := range f.faders {
 		f.faders[i] = models_fader.NewDMXFader(int16(i))
 	}
-	f.GetUpdateFromWriter()
+	f.GetStageFromWriter()
+	f.Start()
 	return f
 }
 
-/*
-Get current stage from the writer and update internal faders with it
-
-A call to this function from the outside is only necessary, if the fading writer is not using the actual writer exclusively.
-*/
-func (f *FadingService) GetUpdateFromWriter() {
+// Get current stage from the writer and update internal faders with it
+//
+// A call to this function from the outside is only necessary, if the fading writer is not using the actual writer exclusively.
+func (f *FadingService) GetStageFromWriter() {
 	log.Infof("Updating fader with values from writer stage")
 	stage := f.writer.GetStage()
 	for i := range f.faders {
-		log.Tracef("Updated channel '%v' to '%v'", i, stage[i])
+		log.Tracef("Updating channel '%v' to '%v'", i, stage[i])
 		f.faders[i].SetValue(float32(stage[i]))
 	}
 }
@@ -104,4 +101,42 @@ func (f *FadingService) loop() {
 		time.Sleep(time.Millisecond * models_fader.TICK_INTERVAL_MILLIS)
 	}
 	log.Infof("Stopped fading writer")
+}
+
+// Connect to DMX
+func (s *FadingService) ConnectDMX() {
+	opts := options.GetAppOptions()
+	channels := opts.DmxChannelCount
+	port := opts.DmxWritePort
+	baud := opts.DmxWriteBaudrate
+	log.Infof("Opening DMX Serial for WRITING using port %s", port)
+	config := &serial.Config{Name: port, Baud: baud}
+
+	// Create a controller and connect to it
+	writer := dmxusbpro.NewEnttecDMXUSBProController(config, channels, true)
+	writer.SetLogVerbosity(opts.DmxLogLevel)
+	if err := writer.Connect(); err != nil {
+		log.Fatalf("Failed to connect DMX Controller for WRITING: %s", err)
+	}
+	s.writer = writer
+}
+
+// Disconnect from DMX
+func (s *FadingService) DisconnectDMX() {
+	if s.writer != nil {
+		log.Debugf("Shutting down DMX writer...")
+		shouldClear := options.GetAppOptions().DmxClearOnQuit
+		if shouldClear {
+			log.Infof("Clearing DMX output to zeros")
+			s.writer.ClearStage()
+			s.writer.Commit()
+		} else {
+			log.Debugf("Skipping DMX output cleanup")
+		}
+		if err := s.writer.Disconnect(); err != nil {
+			log.Fatal("Error disconnecting DMX writer:", err)
+		} else {
+			log.Infof("DMX writer was shut down gracefully")
+		}
+	}
 }
