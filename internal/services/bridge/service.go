@@ -38,6 +38,10 @@ func NewBridgeService(reader *dmx.DMXReaderService, writer *fading.FadingService
 //
 // This enables passing on any data that is read
 func (b *BridgeService) Activate() {
+	if b.isActive {
+		log.Tracef("Bridge already active")
+		return
+	}
 	b.isActive = true
 	b.UpdateAll()
 }
@@ -46,6 +50,10 @@ func (b *BridgeService) Activate() {
 //
 // This stops passing on data that is read
 func (b *BridgeService) Deactivate() {
+	if !b.isActive {
+		log.Tracef("Bridge already inactive")
+		return
+	}
 	b.isActive = false
 }
 

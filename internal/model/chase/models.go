@@ -10,6 +10,9 @@ import (
 // SceneRenderFunc defines the renderer used by chase as return value.
 type SceneRenderFunc func(scene models_scene.Scene, fadeTimeMillis int64)
 
+// ChangeBridgeStateFunc defines the function to turn the DMXBridge on/off
+type ChangeBridgeStateFunc func(active bool)
+
 // Internal representation of a Chase.
 type Chase struct {
 	// Name for this trigger - mus be unique
@@ -18,6 +21,8 @@ type Chase struct {
 	Chase []Step
 	// Delegate to render a step's scene
 	renderDelegate SceneRenderFunc
+	// Delegate to change bridge state
+	bridgeDelegate ChangeBridgeStateFunc
 	// Index of next step (in the chase)
 	nextStep int
 }
@@ -53,10 +58,11 @@ type Step struct {
 }
 
 // Run the chase continuing with the next step
-func (c *Chase) RunFromStart(renderer SceneRenderFunc) {
+func (c *Chase) RunFromStart(renderer SceneRenderFunc, bridge ChangeBridgeStateFunc) {
 	log.WithField("chase", c.Name).Debugf("Starting chase from the start")
 	c.nextStep = 0
 	c.renderDelegate = renderer
+	c.bridgeDelegate = bridge
 	go c.planNextStep()
 }
 
@@ -102,9 +108,14 @@ func (c *Chase) renderNextStep() {
 	nextStep := c.getNextStep()
 	if c.renderDelegate == nil {
 		ll.Warnf("Render delegate unset, skipping")
-		return
+	} else {
+		c.renderDelegate(nextStep.Scene, nextStep.FadeTimeMillis)
 	}
-	c.renderDelegate(nextStep.Scene, nextStep.FadeTimeMillis)
+	if c.bridgeDelegate == nil {
+		ll.Warnf("Bridge delegate unset, skipping")
+	} else {
+		c.bridgeDelegate(nextStep.BridgeActive)
+	}
 }
 
 // planNextStep waits the appropriate amount of time (delay)
