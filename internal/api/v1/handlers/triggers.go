@@ -11,7 +11,9 @@ func RegisterTriggerHandlers(g *gin.RouterGroup, svc *trigger.TriggerService) {
 	g.POST("trigger", createTriggerHandler(svc))
 }
 
-// Handle triggers from ?
+// createTriggerHandler returns a HandlerFunction as needed by GIN
+//
+// The function parses the request and handles it using the [TriggerService]
 func createTriggerHandler(svc *trigger.TriggerService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tr := dtos.TriggerSource{}

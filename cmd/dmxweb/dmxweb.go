@@ -19,7 +19,9 @@ func main() {
 	options.InitAppOptions()
 	setup.SetUpLogging()
 	setup.SetUpDMX()
-	srv := setup.SetUpAndStartServer()
+	svcs := setup.InitServices()
+
+	srv := setup.SetUpAndStartServer(svcs)
 
 	handleShutdown(srv)
 }
@@ -28,12 +30,14 @@ func main() {
 Waits until receiving a shutdown command, then runs cleanup/shutdown calls
 */
 func handleShutdown(srv *http.Server) {
+	log.Tracef("Preparing to handle shutdown commands... ")
 	// Wait for quit signal(s)
 	quit := make(chan os.Signal, 1)
 	// kill (no param) default send syscall.SIGTERM
 	// kill -2 is syscall.SIGINT
 	// kill -9 is syscall.SIGKILL but can't be catch, so don't need add it
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	log.Debugf("Ready to handle shutdown commands.")
 	<-quit
 
 	log.Infof("Received shutdown command - Starting to clean up...")
