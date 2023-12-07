@@ -3,11 +3,11 @@
 ###################################################################
 triggers:
   - source: "35406887899400"
-    chase: my-sample-trigger
+    chase: my-sample-chase
 
 chases:
   # Name for this chase
-  - name: my-sample-trigger
+  - name: my-sample-chase
     # The sequence with delay times
     chase:
       - delayTimeMillis: 0 # This happens immediately
