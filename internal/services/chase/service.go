@@ -3,21 +3,23 @@ package chase
 import (
 	models_chase "github.com/H3rby7/dmx-web-go/internal/model/chase"
 	models_scene "github.com/H3rby7/dmx-web-go/internal/model/scene"
-	"github.com/H3rby7/dmx-web-go/internal/services"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
+	"github.com/H3rby7/dmx-web-go/internal/services/fading"
 	log "github.com/sirupsen/logrus"
 )
 
 // Stateful construct for chases
 type ChaseService struct {
-	chases []models_chase.Chase
+	chases        []models_chase.Chase
+	fadingService *fading.FadingService
 }
 
-func NewChaseService(configService *config.ConfigService) *ChaseService {
+func NewChaseService(configService *config.ConfigService, fadingService *fading.FadingService) *ChaseService {
 	log.Debugf("Creating new ChaseService")
 	chases := configService.GetChases()
 	return &ChaseService{
-		chases: chases,
+		chases:        chases,
+		fadingService: fadingService,
 	}
 }
 
@@ -34,7 +36,7 @@ func (svc *ChaseService) StartChaseFromTheTop(chaseName string) (ok bool) {
 	ll.Debugf("Found chase")
 	chase.RunFromStart(func(scene models_scene.Scene, fadeTimeMillis int64) {
 		ll.Debugf("Rendering... ")
-		services.SetScene(scene, fadeTimeMillis)
+		svc.fadingService.FadeScene(scene, fadeTimeMillis)
 	})
 	return
 }

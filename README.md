@@ -49,7 +49,7 @@ curl -v -X PUT http://localhost:8080/api/v1/dmx/clear
 
 ```sh
 # Send trigger signal from source '35406887899400'
-curl -X POST -H "Content-Type: application/json" -d "{\"source\": \"35406887899400\"}" localhost:8080/api/v1/trigger
+curl -v -X POST -H "Content-Type: application/json" -d "{\"source\": \"35406887899400\"}" localhost:8080/api/v1/trigger
 ```
 
 ## Example WWW

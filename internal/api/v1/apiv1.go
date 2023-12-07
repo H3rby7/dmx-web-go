@@ -20,7 +20,7 @@ func RegisterHandlers(g *gin.RouterGroup, services *models_services.ApplicationS
 	}
 
 	if ok, objection := opts.CanWriteDMX(); ok {
-		apiv1handlers.RegisterDMXHandlers(g)
+		apiv1handlers.RegisterDMXHandlers(g, services.FadingService)
 	} else {
 		log.Warnf("%s -> Skipping registration of 'DMX' API", objection)
 	}

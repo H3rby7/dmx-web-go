@@ -1,10 +1,23 @@
-package dmxfader
+package models_fader
 
 import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
 )
+
+// 25 per second
+const TICK_INTERVAL_MILLIS = 1000 / 25
+
+// A value of 1 millisecond results in immediate fading
+const FADE_IMMEDIATELY int64 = 1
+
+func NewDMXFader(channel int16) DMXFader {
+	return DMXFader{
+		isActive: false,
+		channel:  channel,
+	}
+}
 
 type DMXFader struct {
 	// Is this fader working to reach a new value?
@@ -67,4 +80,11 @@ func (f *DMXFader) GetCurrentValue() byte {
 // Is this fader active, or already done?
 func (f *DMXFader) IsActive() bool {
 	return f.isActive
+}
+
+// Set internal value
+//
+// Use sparsely!
+func (f *DMXFader) SetValue(val float32) {
+	f.currentValue = val
 }

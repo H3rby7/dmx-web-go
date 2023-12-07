@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/H3rby7/dmx-web-go/internal/dmx"
+	models_services "github.com/H3rby7/dmx-web-go/internal/model/services"
 	"github.com/H3rby7/dmx-web-go/internal/options"
 	"github.com/H3rby7/dmx-web-go/internal/setup"
 
@@ -18,18 +18,17 @@ import (
 func main() {
 	options.InitAppOptions()
 	setup.SetUpLogging()
-	setup.SetUpDMX()
 	svcs := setup.InitServices()
 
 	srv := setup.SetUpAndStartServer(svcs)
 
-	handleShutdown(srv)
+	handleShutdown(srv, svcs)
 }
 
 /*
 Waits until receiving a shutdown command, then runs cleanup/shutdown calls
 */
-func handleShutdown(srv *http.Server) {
+func handleShutdown(srv *http.Server, services *models_services.ApplicationServices) {
 	log.Tracef("Preparing to handle shutdown commands... ")
 	// Wait for quit signal(s)
 	quit := make(chan os.Signal, 1)
@@ -51,6 +50,12 @@ func handleShutdown(srv *http.Server) {
 	} else {
 		log.Infof("Server was shut down gracefully")
 	}
-	dmx.Shutdown()
+	opts := options.GetAppOptions()
+	if ok, _ := opts.CanWriteDMX(); ok {
+		services.FadingService.Stop()
+	}
+	services.DMXReaderService.DisconnectDMX()
+	services.DMXWriterService.DisconnectDMX()
+
 	log.Infof("Finished cleaning up")
 }

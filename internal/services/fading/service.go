@@ -1,44 +1,35 @@
-package dmxfader
+package fading
 
 import (
 	"time"
 
+	models_fader "github.com/H3rby7/dmx-web-go/internal/model/fader"
+	models_scene "github.com/H3rby7/dmx-web-go/internal/model/scene"
 	"github.com/H3rby7/dmx-web-go/internal/options"
-	"github.com/H3rby7/usbdmx-golang/controller/enttec/dmxusbpro"
+	"github.com/H3rby7/dmx-web-go/internal/services/dmx"
 	log "github.com/sirupsen/logrus"
 )
 
-// 25 per second
-const TICK_INTERVAL_MILLIS = 1000 / 25
-
-// A value of 1 millisecond results in immediate fading
-const FADE_IMMEDIATELY = 1
-
-/*
-DMX Writer that takes care of fading channels to the desired values over time.
-*/
-type FadingWriter struct {
+// DMX Writer that takes care of fading channels to the desired values over time.
+type FadingService struct {
 	isActive bool
-	writer   *dmxusbpro.EnttecDMXUSBProController
-	faders   []DMXFader
+	writer   *dmx.DMXWriterService
+	faders   []models_fader.DMXFader
 }
 
 // Create a new fading writer with the current DMX stage
-func NewFadingWriter(writer *dmxusbpro.EnttecDMXUSBProController) *FadingWriter {
+func NewFadingService(writer *dmx.DMXWriterService) *FadingService {
 	if writer == nil {
 		log.Panicf("Writer is nil, cannot create FadingWriter.")
 	}
 	opts := options.GetAppOptions()
-	f := &FadingWriter{
+	f := &FadingService{
 		isActive: false,
 		writer:   writer,
-		faders:   make([]DMXFader, opts.DmxChannelCount+1),
+		faders:   make([]models_fader.DMXFader, opts.DmxChannelCount+1),
 	}
 	for i := range f.faders {
-		f.faders[i] = DMXFader{
-			isActive: false,
-			channel:  int16(i),
-		}
+		f.faders[i] = models_fader.NewDMXFader(int16(i))
 	}
 	f.GetUpdateFromWriter()
 	return f
@@ -49,17 +40,17 @@ Get current stage from the writer and update internal faders with it
 
 A call to this function from the outside is only necessary, if the fading writer is not using the actual writer exclusively.
 */
-func (f *FadingWriter) GetUpdateFromWriter() {
+func (f *FadingService) GetUpdateFromWriter() {
 	log.Infof("Updating fader with values from writer stage")
 	stage := f.writer.GetStage()
 	for i := range f.faders {
 		log.Tracef("Updated channel '%v' to '%v'", i, stage[i])
-		f.faders[i].currentValue = float32(stage[i])
+		f.faders[i].SetValue(float32(stage[i]))
 	}
 }
 
 // Fade a given channel to a given value over a given duration
-func (f *FadingWriter) FadeTo(channel int16, value byte, fadeDurationMillis int64) {
+func (f *FadingService) FadeTo(channel int16, value byte, fadeDurationMillis int64) {
 	highestChannel := int16(len(f.faders))
 	if channel < 1 || channel > highestChannel {
 		log.Errorf("Skipping update for channel '%d', because it is out of range, must be between 1 and %d", channel, highestChannel)
@@ -68,25 +59,34 @@ func (f *FadingWriter) FadeTo(channel int16, value byte, fadeDurationMillis int6
 	f.faders[channel].FadeTo(value, fadeDurationMillis)
 }
 
+// Fade a given scene over a given duration
+func (f *FadingService) FadeScene(scene models_scene.Scene, fadeDurationMillis int64) {
+	log.Debugf("Using a fade duration of %d millis, setting scene: %v", fadeDurationMillis, scene.List)
+	for _, entry := range scene.List {
+		f.FadeTo(entry.Channel, entry.Value, fadeDurationMillis)
+	}
+}
+
 // Immediately set all DMX values to 0
-func (f *FadingWriter) ClearAll() {
+func (f *FadingService) ClearAll() {
 	for i := range f.faders {
 		f.faders[i].FadeTo(0, 0)
 	}
 }
 
 // Start a go-routine that runs the update loop
-func (f *FadingWriter) Start() {
+func (f *FadingService) Start() {
 	go f.loop()
 }
 
 // Stop the update loop go-routine
-func (f *FadingWriter) Stop() {
+func (f *FadingService) Stop() {
+	log.Infof("Stopping FadingService")
 	f.isActive = false
 }
 
 // Blocking loop that calculates a nd runs updates on the faders.
-func (f *FadingWriter) loop() {
+func (f *FadingService) loop() {
 	log.Infof("Started fading writer")
 	f.isActive = true
 	for f.isActive {
@@ -101,7 +101,7 @@ func (f *FadingWriter) loop() {
 		if dirty {
 			f.writer.Commit()
 		}
-		time.Sleep(time.Millisecond * TICK_INTERVAL_MILLIS)
+		time.Sleep(time.Millisecond * models_fader.TICK_INTERVAL_MILLIS)
 	}
 	log.Infof("Stopped fading writer")
 }
