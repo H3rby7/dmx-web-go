@@ -55,7 +55,7 @@ func handleShutdown(srv *http.Server, services *models_services.ApplicationServi
 		services.FadingService.Stop()
 	}
 	services.DMXReaderService.DisconnectDMX()
-	services.DMXWriterService.DisconnectDMX()
+	services.FadingService.DisconnectDMX()
 
 	log.Infof("Finished cleaning up")
 }
