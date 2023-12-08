@@ -49,7 +49,13 @@ func (b *BridgeService) Activate() {
 		return
 	}
 	b.isActive = true
-	b.updateAll()
+	log.Info("Bridge activated")
+	opts := options.GetAppOptions()
+	if ok, objection := opts.CanBridge(); !ok {
+		log.Infof("%s -> Skipping updateAll", objection)
+	} else {
+		b.updateAll()
+	}
 }
 
 // Deactivate the DMX bridge
@@ -60,6 +66,7 @@ func (b *BridgeService) Deactivate() {
 		log.Tracef("Bridge already inactive")
 		return
 	}
+	log.Info("Bridge deactivated")
 	b.isActive = false
 }
 
