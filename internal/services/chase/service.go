@@ -41,12 +41,12 @@ func (svc *ChaseService) StartChaseFromTheTop(chaseName string) (ok bool) {
 	return
 }
 
-func (svc *ChaseService) findChaseByName(chaseName string) (ok bool, chase models_chase.Chase) {
+func (svc *ChaseService) findChaseByName(chaseName string) (ok bool, chase *models_chase.Chase) {
 	ok = false
-	for _, c := range svc.chases {
-		if c.Name == chaseName {
+	for i := 0; i < len(svc.chases); i++ {
+		if svc.chases[i].Name == chaseName {
 			ok = true
-			chase = c
+			chase = &svc.chases[i]
 			return
 		}
 	}
