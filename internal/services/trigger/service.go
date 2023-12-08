@@ -22,13 +22,13 @@ func NewTriggerService(configService *config.ConfigService, chaseService *chase.
 	}
 }
 
-/*
-Handle an incoming trigger
-*/
+// Handle an incoming trigger
 func (svc *TriggerService) Handle(source string) (ok bool) {
 	log.WithField("source", source).Infof("Handling incoming trigger")
 	ok, chase := svc.mapToChaseName(source)
 	if ok {
+		// TODO: Handle triggered again, before chase has finished
+		// TODO: Other triggers, like start/stop/continue etc.
 		svc.chaseService.StartChaseFromTheTop(chase)
 	}
 	return
