@@ -54,12 +54,16 @@ func (svc *ChaseService) findChaseByName(chaseName string) (ok bool, chase model
 }
 
 func (svc *ChaseService) renderDelegate(scene models_scene.Scene, fadeTimeMillis int64) {
+	if svc.fadingService == nil {
+		log.Warnf("No FadingService, skipping... ")
+		return
+	}
 	svc.fadingService.FadeScene(scene, fadeTimeMillis)
 }
 
 func (svc *ChaseService) bridgeDelegate(active bool) {
 	if svc.bridgeService == nil {
-		log.Debugf("No DMX bridge, skipping... ")
+		log.Warnf("No DMX bridge, skipping... ")
 		return
 	}
 	log.Debugf("Setting Bridge State... ")
