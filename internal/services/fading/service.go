@@ -20,6 +20,7 @@ type FadingService struct {
 
 // Create a new fading writer with the current DMX stage
 func NewFadingService() *FadingService {
+	log.Debugf("Creating new FadingService")
 	opts := options.GetAppOptions()
 	f := &FadingService{
 		isActive: false,
@@ -29,15 +30,19 @@ func NewFadingService() *FadingService {
 	for i := range f.faders {
 		f.faders[i] = models_fader.NewDMXFader(int16(i))
 	}
-	f.GetStageFromWriter()
-	f.Start()
+	if ok, objection := opts.CanWriteDMX(); ok {
+		f.getStageFromWriter()
+		f.Start()
+	} else {
+		log.Warnf("%s - Skipping Start", objection)
+	}
 	return f
 }
 
 // Get current stage from the writer and update internal faders with it
 //
 // A call to this function from the outside is only necessary, if the fading writer is not using the actual writer exclusively.
-func (f *FadingService) GetStageFromWriter() {
+func (f *FadingService) getStageFromWriter() {
 	log.Infof("Updating fader with values from writer stage")
 	stage := f.writer.GetStage()
 	for i := range f.faders {
@@ -106,6 +111,12 @@ func (f *FadingService) loop() {
 // Connect to DMX
 func (s *FadingService) ConnectDMX() {
 	opts := options.GetAppOptions()
+
+	if ok, objection := opts.CanWriteDMX(); !ok {
+		log.Infof("%s - Skipping DMX Writer Creation", objection)
+		return
+	}
+
 	channels := opts.DmxChannelCount
 	port := opts.DmxWritePort
 	baud := opts.DmxWriteBaudrate

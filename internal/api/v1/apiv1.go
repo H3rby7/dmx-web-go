@@ -18,14 +18,14 @@ func RegisterHandlers(g *gin.RouterGroup, services *models_services.ApplicationS
 		ll.Infof("Registering handlers for 'BRIDGE'")
 		apiv1handlers.RegisterBridgeHandlers(g, services.BridgeService)
 	} else {
-		ll.Warnf("%s -> Skipping registration of handlers for 'BRIDGE'", objection)
+		ll.Infof("%s -> Skipping registration of handlers for 'BRIDGE'", objection)
 	}
 
 	if ok, objection := opts.CanWriteDMX(); ok {
 		ll.Infof("Registering handlers for 'DMX'")
 		apiv1handlers.RegisterDMXHandlers(g, services.FadingService)
 	} else {
-		ll.Warnf("%s -> Skipping registration of handlers for 'DMX'", objection)
+		ll.Infof("%s -> Skipping registration of handlers for 'DMX'", objection)
 	}
 
 	ll.Infof("Registering handlers for 'TRIGGER'")

@@ -2,7 +2,6 @@ package setup
 
 import (
 	models_services "github.com/H3rby7/dmx-web-go/internal/model/services"
-	"github.com/H3rby7/dmx-web-go/internal/options"
 	"github.com/H3rby7/dmx-web-go/internal/services/bridge"
 	"github.com/H3rby7/dmx-web-go/internal/services/chase"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
@@ -18,29 +17,10 @@ import (
 func InitServices() *models_services.ApplicationServices {
 	log.Infof("Initializing Application Services... ")
 	services := &models_services.ApplicationServices{}
-	opts := options.GetAppOptions()
 
-	if ok, objection := opts.CanReadDMX(); ok {
-		services.DMXReaderService = dmx.NewDMXReaderService()
-	} else {
-		log.Warnf("%s - skipping DMX Reader Creation", objection)
-	}
-
-	if ok, objection := opts.CanWriteDMX(); ok {
-		services.FadingService = fading.NewFadingService()
-	} else {
-		log.Warnf("%s - Skipping DMX Writer Creation", objection)
-	}
-
-	if opts.DmxBridge {
-		if ok, objection := opts.CanBridge(); ok {
-			services.BridgeService = bridge.NewBridgeService(services.DMXReaderService, services.FadingService)
-			services.BridgeService.Activate()
-			go services.BridgeService.BridgeDMX()
-		} else {
-			log.Infof("%s -> Skipping creation of 'BridgeService'", objection)
-		}
-	}
+	services.DMXReaderService = dmx.NewDMXReaderService()
+	services.FadingService = fading.NewFadingService()
+	services.BridgeService = bridge.NewBridgeService(services.DMXReaderService, services.FadingService)
 
 	services.ConfigService = config.NewConfigService()
 	services.ChaseService = chase.NewChaseService(services.ConfigService, services.FadingService, services.BridgeService)

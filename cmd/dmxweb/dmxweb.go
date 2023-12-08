@@ -50,10 +50,8 @@ func handleShutdown(srv *http.Server, services *models_services.ApplicationServi
 	} else {
 		log.Infof("Server was shut down gracefully")
 	}
-	opts := options.GetAppOptions()
-	if ok, _ := opts.CanWriteDMX(); ok {
-		services.FadingService.Stop()
-	}
+
+	services.FadingService.Stop()
 	services.DMXReaderService.DisconnectDMX()
 	services.FadingService.DisconnectDMX()
 

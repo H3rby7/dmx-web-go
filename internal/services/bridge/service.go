@@ -20,10 +20,8 @@ type BridgeService struct {
 }
 
 func NewBridgeService(reader *dmx.DMXReaderService, writer *fading.FadingService) *BridgeService {
+	log.Debugf("Creating new BridgeService")
 	opts := options.GetAppOptions()
-	if ok, objection := opts.CanBridge(); !ok {
-		log.Panicf("%s, cannot bridge.", objection)
-	}
 	channels := opts.DmxChannelCount
 	b := &BridgeService{
 		isActive:     false,
@@ -31,6 +29,14 @@ func NewBridgeService(reader *dmx.DMXReaderService, writer *fading.FadingService
 		reader:       reader,
 		writer:       writer,
 	}
+
+	if ok, objection := opts.CanBridge(); ok {
+		b.Activate()
+		go b.bridgeDMX()
+	} else {
+		log.Infof("%s -> Skipping to bridge.", objection)
+	}
+
 	return b
 }
 
@@ -43,7 +49,7 @@ func (b *BridgeService) Activate() {
 		return
 	}
 	b.isActive = true
-	b.UpdateAll()
+	b.updateAll()
 }
 
 // Deactivate the DMX bridge
@@ -58,13 +64,13 @@ func (b *BridgeService) Deactivate() {
 }
 
 // Register On-DMX-Change Channel
-func (b *BridgeService) BridgeDMX() {
+func (b *BridgeService) bridgeDMX() {
 	c := make(chan messages.EnttecDMXUSBProApplicationMessage)
 	go b.reader.OnDMXChange(c)
 	for msg := range c {
 		cs, err := messages.ToChangeSet(msg)
 		if err != nil {
-			log.Printf("Could not convert to changeset, but read \tlabel=%v \tdata=%v", msg.GetLabel(), msg.GetPayload())
+			log.Warnf("Could not convert to changeset, but read \tlabel=%v \tdata=%v", msg.GetLabel(), msg.GetPayload())
 		} else {
 			for k, v := range cs {
 				b.foreignInput[k] = v
@@ -75,7 +81,7 @@ func (b *BridgeService) BridgeDMX() {
 }
 
 // Update the writer with ALL stored values, if bridge is active
-func (b *BridgeService) UpdateAll() {
+func (b *BridgeService) updateAll() {
 	if !b.isActive {
 		log.Debugf("Skipping update, because bridge is not active")
 		return

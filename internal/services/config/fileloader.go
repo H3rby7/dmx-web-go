@@ -64,7 +64,7 @@ func loadTriggersFromEnvPath() (file models_config.ConfigFile, success bool) {
 
 // Loads from the yaml put next to executable
 func loadFromExecDir() (file models_config.ConfigFile, success bool) {
-	log.WithField("filename", CONFIG_FILE_NAME).Info("Reading actions from exec directory ")
+	log.WithField("filename", CONFIG_FILE_NAME).Debug("Attempting to read from exec directory ")
 	_, err := os.Stat(CONFIG_FILE_NAME)
 	if err != nil {
 		log.Debug(fmt.Sprintf("No '%s' file present in dir of executable ", CONFIG_FILE_NAME))

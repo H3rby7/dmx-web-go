@@ -17,6 +17,7 @@ type DMXReaderService struct {
 //
 // Connects to an [EnttecDMXUSBProController] using the Port specified in [AppOptions]
 func NewDMXReaderService() (service *DMXReaderService) {
+	log.Debugf("Creating new DMXReaderService")
 	service = &DMXReaderService{}
 	service.ConnectDMX()
 	return
@@ -33,6 +34,12 @@ func (s *DMXReaderService) OnDMXChange(c chan messages.EnttecDMXUSBProApplicatio
 // Connect to DMX
 func (s *DMXReaderService) ConnectDMX() {
 	opts := options.GetAppOptions()
+
+	if ok, objection := opts.CanReadDMX(); !ok {
+		log.Infof("%s - skipping DMX Reader Creation", objection)
+		return
+	}
+
 	channels := opts.DmxChannelCount
 	port := opts.DmxReadPort
 	baud := opts.DmxReadBaudrate
