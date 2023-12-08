@@ -71,7 +71,8 @@ func mapChases(in []models_config.Chase) []models_chase.Chase {
 func mapTrigger(in models_config.Trigger) models_trigger.Trigger {
 	return models_trigger.Trigger{
 		Source: in.Source,
-		Chase:  in.Chase,
+		Goal:   in.Goal,
+		Target: in.Target,
 	}
 }
 

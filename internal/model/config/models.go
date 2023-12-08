@@ -24,8 +24,10 @@ type ConfigFile struct {
 type Trigger struct {
 	// Source, as key to map to a trigger
 	Source string `yaml:"source" binding:"required"`
-	// Name of the chase to work with
-	Chase string `yaml:"chase" binding:"required"`
+	// Goal of the trigger
+	Goal string `yaml:"goal" binding:"required"`
+	// Name of the target to work with, e.G. the name of a chase
+	Target string `yaml:"target" binding:"required"`
 }
 
 // External representation of a Chase (chain of actions).

@@ -3,7 +3,8 @@
 ###################################################################
 triggers:
   - source: "35406887899400"
-    chase: my-sample-chase
+    goal: chase-reset-and-run
+    target: my-sample-chase
 
 chases:
   # Name for this chase

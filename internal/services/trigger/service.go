@@ -13,6 +13,9 @@ type TriggerService struct {
 	chaseService *chase.ChaseService
 }
 
+// NewTriggerService creates a new [TriggerService] instance
+//
+// Also loads the triggers from the [ConfigService]
 func NewTriggerService(configService *config.ConfigService, chaseService *chase.ChaseService) *TriggerService {
 	log.Debugf("Creating new TriggerService")
 	triggers := configService.GetTriggers()
@@ -22,30 +25,46 @@ func NewTriggerService(configService *config.ConfigService, chaseService *chase.
 	}
 }
 
-// Handle an incoming trigger
-func (svc *TriggerService) Handle(source string) (ok bool) {
+// Handle the source by finding and running the corresponding trigger
+func (svc *TriggerService) Handle(source string) bool {
 	log.WithField("source", source).Infof("Handling incoming trigger")
-	ok, chase := svc.mapToChaseName(source)
-	if ok {
-		// TODO: Other triggers, like start/stop/continue etc.
-		svc.chaseService.StartChaseFromTheTop(chase)
+	ok, trigger := svc.findTrigger(source)
+	if !ok {
+		return false
 	}
-	return
+	return svc.triggerTrigger(*trigger)
 }
 
-func (svc *TriggerService) mapToChaseName(source string) (ok bool, chaseName string) {
+// findTrigger iterates over known triggers until it finds a [Trigger] with matching source.
+//
+// Returns a reference to the given trigger, if found.
+// That way the same instance of the trigger is returned on censecutive calls with identical source
+func (svc *TriggerService) findTrigger(source string) (ok bool, trigger *models_trigger.Trigger) {
 	ll := log.WithField("source", source)
 
-	ll.Debugf("Mapping trigger source to chase")
+	ll.Debugf("Finding trigger")
 	ok = false
-	for _, m := range svc.triggers {
-		if m.Source == source {
+	for i := 0; i < len(svc.triggers); i++ {
+		if svc.triggers[i].Source == source {
 			ok = true
-			chaseName = m.Chase
-			ll.Debugf("Matched trigger to chase with name '%s'", chaseName)
+			trigger = &svc.triggers[i]
 			return
 		}
 	}
 	ll.Warnf("No trigger with the given source")
 	return
+}
+
+// triggerTrigger runs an action depending on the goal
+func (svc *TriggerService) triggerTrigger(trigger models_trigger.Trigger) bool {
+	ll := log.WithField("goal", trigger.Goal).WithField("target", trigger.Target)
+	switch trigger.Goal {
+	// TODO: Other triggers, like start/stop/continue etc.
+	case "chase-reset-and-run":
+		svc.chaseService.StartChaseFromTheTop(trigger.Target)
+	default:
+		ll.Warnf("Goal '%s' is unknown", trigger.Goal)
+		return false
+	}
+	return true
 }

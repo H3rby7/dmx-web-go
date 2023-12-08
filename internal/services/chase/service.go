@@ -17,7 +17,7 @@ type ChaseService struct {
 	bridgeService *bridge.BridgeService
 }
 
-// NewChaseService creates a new ChaseService instance
+// NewChaseService creates a new [ChaseService] instance
 //
 // Also loads the chases from the [ConfigService]
 func NewChaseService(configService *config.ConfigService, fadingService *fading.FadingService, bridgeService *bridge.BridgeService) *ChaseService {
