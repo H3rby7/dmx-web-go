@@ -27,39 +27,9 @@ type Chase struct {
 	nextStep int
 }
 
-// An element in the list of a chase
-type Step struct {
-	/*
-		Time in millis to pass after the previous item before this scene is faded in.
-
-		Default: 0
-	*/
-	DelayTimeMillis int64
-	/*
-		The desired status of the DMX bridge.
-
-		Default: unset, no changes done.
-	*/
-	BridgeActive bool
-	/*
-		Scene content to transition to
-
-		Default: no scene
-	*/
-	Scene models_scene.Scene
-	/*
-		Fade time in millis for the change.
-
-		Default = 0
-
-		*Note: The bridge does not support being faded in/out yet.*
-	*/
-	FadeTimeMillis int64
-}
-
 // Run the chase continuing with the next step
 func (c *Chase) RunFromStart(renderer SceneRenderFunc, bridge ChangeBridgeStateFunc) {
-	log.WithField("chase", c.Name).Debugf("Starting chase from the start")
+	log.WithField("chase", c.Name).Debugf("Starting chase from step 0")
 	c.nextStep = 0
 	c.renderDelegate = renderer
 	c.bridgeDelegate = bridge
