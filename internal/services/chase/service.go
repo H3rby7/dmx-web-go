@@ -1,3 +1,4 @@
+// Package chase hosts the ChaseService and provides means to work with Chases
 package chase
 
 import (
@@ -9,13 +10,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Stateful construct for chases
+// ChaseService handles chases and actions on chases
 type ChaseService struct {
 	chases        []models_chase.Chase
 	fadingService *fading.FadingService
 	bridgeService *bridge.BridgeService
 }
 
+// NewChaseService creates a new ChaseService instance
+//
+// Also loads the chases from the [ConfigService]
 func NewChaseService(configService *config.ConfigService, fadingService *fading.FadingService, bridgeService *bridge.BridgeService) *ChaseService {
 	log.Debugf("Creating new ChaseService")
 	chases := configService.GetChases()
@@ -26,9 +30,7 @@ func NewChaseService(configService *config.ConfigService, fadingService *fading.
 	}
 }
 
-/*
-Reset a chase to its first element and start running it.
-*/
+// StartChaseFromTheTop resets a chase to its first element and start running it.
 func (svc *ChaseService) StartChaseFromTheTop(chaseName string) (ok bool) {
 	ll := log.WithField("chase", chaseName)
 	ok, chase := svc.findChaseByName(chaseName)
@@ -41,6 +43,10 @@ func (svc *ChaseService) StartChaseFromTheTop(chaseName string) (ok bool) {
 	return
 }
 
+// findChaseByName looks for a chase matching the name
+//
+// Returns a reference to the given chase, if found.
+// That way the same instance of the chase is returned on censecutive calls with identical chaseName
 func (svc *ChaseService) findChaseByName(chaseName string) (ok bool, chase *models_chase.Chase) {
 	ok = false
 	for i := 0; i < len(svc.chases); i++ {
@@ -53,19 +59,13 @@ func (svc *ChaseService) findChaseByName(chaseName string) (ok bool, chase *mode
 	return
 }
 
+// renderDelegate implements [models_chase.SceneRenderFunc]
 func (svc *ChaseService) renderDelegate(scene models_scene.Scene, fadeTimeMillis int64) {
-	if svc.fadingService == nil {
-		log.Warnf("No FadingService, skipping... ")
-		return
-	}
 	svc.fadingService.FadeScene(scene, fadeTimeMillis)
 }
 
+// bridgeDelegate implements [models_chase.ChangeBridgeStateFunc]
 func (svc *ChaseService) bridgeDelegate(active bool) {
-	if svc.bridgeService == nil {
-		log.Warnf("No DMX bridge, skipping... ")
-		return
-	}
 	log.Debugf("Setting Bridge State... ")
 	if active {
 		svc.bridgeService.Activate()
