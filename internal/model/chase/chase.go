@@ -25,24 +25,27 @@ type Chase struct {
 	bridgeDelegate ChangeBridgeStateFunc
 	// Index of next step (in the chase)
 	nextStep int
+	// Timer to trigger the next step
+	timer *time.Timer
 }
 
 // NewChase constructs a Chase struct, given the name and steps to use.
 func NewChase(name string, steps []Step) Chase {
-	return Chase{
+	c := Chase{
 		Name:     name,
 		Steps:    steps,
-		nextStep: len(steps),
+		nextStep: len(steps), // So [isConcluded] returns true on a fresh chase
 	}
+	return c
 }
 
 // Run the chase continuing with the next step
 func (c *Chase) RunFromStart(renderer SceneRenderFunc, bridge ChangeBridgeStateFunc) {
-	log.WithField("chase", c.Name).Debugf("Starting chase from step 0")
+	log.WithField("chase", c.Name).Debugf("Resetting to step[0] and applying delegates for rendering and bridge")
 	c.nextStep = 0
 	c.renderDelegate = renderer
 	c.bridgeDelegate = bridge
-	go c.planNextStep()
+	c.planNextStep()
 }
 
 // Take the next step and
@@ -59,16 +62,16 @@ func (c *Chase) renderNextAndGoNext() {
 
 // Return the next step
 //
-// *Be careful to check with [hasNextStep] if we have one, first*
+// *Be careful to check with [isConcluded] if we have one, first*
 func (c *Chase) getNextStep() Step {
 	return c.Steps[c.nextStep]
 }
 
-// Is there a next step to render
+// Is this chase concluded/ended/not-started
 //
-// compares the length of the chase to the nextStep
-func (c *Chase) hasNextStep() bool {
-	return (len(c.Steps) > c.nextStep)
+// Checks if there is another step to render by comparing the length of the chase to the nextStep
+func (c *Chase) isConcluded() bool {
+	return (c.nextStep >= len(c.Steps))
 }
 
 // Get next step and render it
@@ -78,8 +81,8 @@ func (c *Chase) renderNextStep() {
 	ll := log.WithField("chase", c.Name)
 	ll.Tracef("Attempting to render next step (%d)", c.nextStep)
 
-	if !c.hasNextStep() {
-		ll.Infof("Reached end of chase")
+	if c.isConcluded() {
+		ll.Infof("Reached end")
 		return
 	}
 
@@ -103,14 +106,18 @@ func (c *Chase) planNextStep() {
 	ll := log.WithField("chase", c.Name)
 	ll.Tracef("Planning next step (%d)", c.nextStep)
 
-	if !c.hasNextStep() {
-		ll.Infof("Reached end of chase")
+	if c.isConcluded() {
+		ll.Infof("Reached end")
 		return
 	}
 
 	delay := c.getNextStep().DelayTimeMillis
-	ll.Debugf("Planning next step (%d) in %d millis", c.nextStep, delay)
-	time.Sleep(time.Duration(delay) * time.Millisecond)
-
-	c.renderNextAndGoNext()
+	if c.timer == nil {
+		ll.Debugf("Creating new AfterFunc timer to render step[%d] in %d millis", c.nextStep, delay)
+		c.timer = time.AfterFunc(time.Duration(delay)*time.Millisecond, c.renderNextAndGoNext)
+	} else {
+		ll.Debugf("Changing existing AfterFunc timer to render step[%d] in %d millis", c.nextStep, delay)
+		c.timer.Stop()
+		c.timer.Reset(time.Duration(delay) * time.Millisecond)
+	}
 }
