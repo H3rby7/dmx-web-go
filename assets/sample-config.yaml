@@ -20,7 +20,7 @@ chases:
               value: 255
             - channel: 2
               value: 255
-      - delayTimeMillis: 500 # This happens 500ms after the previous item was STARTED
+      - delayTimeMillis: 500 # This happens 500ms after the previous scene STARTED fading in
         fadeTimeMillis: 500
         scene:
           list:
@@ -28,7 +28,7 @@ chases:
               value: 100
             - channel: 2
               value: 100
-      - delayTimeMillis: 1500 # Happens 1,5s after the previous item has started
+      - delayTimeMillis: 5000 # Happens 5s after the previous scene STARTED fading in
         bridgeActive: true # enable the DMX bridge
         fadeTimeMillis: 500 # Time to fade back to the bridge
         scene:
