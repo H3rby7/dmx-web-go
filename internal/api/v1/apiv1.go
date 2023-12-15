@@ -1,3 +1,4 @@
+// Package apiv1 bundles all API V1 activities
 package apiv1
 
 import (
@@ -8,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Register Handlers for V1 API
+// RegisterHandlers registers handlers for V1 API
 func RegisterHandlers(g *gin.RouterGroup, services *models_services.ApplicationServices) {
 	ll := log.WithField("API", "V1")
 	ll.Debugf("Registering handlers... ")

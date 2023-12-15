@@ -1,3 +1,4 @@
+// Package config allows using a yaml file to define [Trigger]s, [Chase]s and [Event]s.
 package config
 
 import (

@@ -1,4 +1,5 @@
-package dmx
+// Package reader provides tools to READ from DMX
+package reader
 
 import (
 	"github.com/H3rby7/dmx-web-go/internal/options"
@@ -13,7 +14,7 @@ type DMXReaderService struct {
 	reader *dmxusbpro.EnttecDMXUSBProController
 }
 
-// NewDMXReaderService creates a new DMXReaderService
+// NewDMXReaderService creates a new [DMXReaderService]
 //
 // Connects to an [EnttecDMXUSBProController] using the Port specified in [AppOptions]
 func NewDMXReaderService() (service *DMXReaderService) {
@@ -31,7 +32,7 @@ func (s *DMXReaderService) OnDMXChange(c chan messages.EnttecDMXUSBProApplicatio
 	s.reader.OnDMXChange(c, 15)
 }
 
-// Connect to DMX
+// ConnectDMX connects the internal reader.
 func (s *DMXReaderService) ConnectDMX() {
 	opts := options.GetAppOptions()
 
@@ -60,7 +61,7 @@ func (s *DMXReaderService) ConnectDMX() {
 	}
 }
 
-// Disconnect from DMX
+// DisconnectDMX disconnects the internal reader.
 func (s *DMXReaderService) DisconnectDMX() {
 	if s.reader != nil {
 		log.Debugf("Shutting down DMX reader...")

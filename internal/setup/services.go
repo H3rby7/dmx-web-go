@@ -1,3 +1,4 @@
+// Package setup contains configurations for logging and server as well as service creation
 package setup
 
 import (
@@ -5,9 +6,9 @@ import (
 	"github.com/H3rby7/dmx-web-go/internal/services/bridge"
 	"github.com/H3rby7/dmx-web-go/internal/services/chase"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
-	"github.com/H3rby7/dmx-web-go/internal/services/dmx"
 	"github.com/H3rby7/dmx-web-go/internal/services/event"
 	"github.com/H3rby7/dmx-web-go/internal/services/fading"
+	"github.com/H3rby7/dmx-web-go/internal/services/reader"
 	"github.com/H3rby7/dmx-web-go/internal/services/trigger"
 	log "github.com/sirupsen/logrus"
 )
@@ -19,7 +20,7 @@ func InitServices() *models_services.ApplicationServices {
 	log.Infof("Initializing Application Services... ")
 	services := &models_services.ApplicationServices{}
 
-	services.DMXReaderService = dmx.NewDMXReaderService()
+	services.DMXReaderService = reader.NewDMXReaderService()
 	services.FadingService = fading.NewFadingService()
 	services.BridgeService = bridge.NewBridgeService(services.DMXReaderService, services.FadingService)
 

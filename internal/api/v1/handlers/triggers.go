@@ -1,3 +1,4 @@
+// Package apiv1handlers defines all handlers used by the API in version 1
 package apiv1handlers
 
 import (
@@ -6,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Register Handlers for V1 API
+// RegisterTriggerHandlers registers the [Trigger] handlers for V1 API
 func RegisterTriggerHandlers(g *gin.RouterGroup, svc *trigger.TriggerService) {
 	g.POST("trigger", createTriggerHandler(svc))
 }

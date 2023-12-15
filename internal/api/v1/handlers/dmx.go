@@ -1,3 +1,4 @@
+// Package apiv1handlers defines all handlers used by the API in version 1
 package apiv1handlers
 
 import (
@@ -8,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Register Handlers for V1 API
+// RegisterDMXHandlers registers the DMX handlers for V1 API
 func RegisterDMXHandlers(g *gin.RouterGroup, svc *fading.FadingService) {
 	g.PATCH("dmx", createPatchDmxHandler(svc))
 	g.PATCH("dmx/fade", createPatchDmxFadeHandler(svc))

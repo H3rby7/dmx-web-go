@@ -1,3 +1,4 @@
+// Package config allows using a yaml file to define [Trigger]s, [Chase]s and [Event]s.
 package config
 
 import (
@@ -12,9 +13,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// DEV_CONFIG_FILE_PATH is the relative path of an example config for DEV purposes.
+// This is only a fallback
 const DEV_CONFIG_FILE_PATH = "./assets/sample-config.yaml"
 
-// Attempt to load from multiple locations
+// Attempt to load the config file (from multiple locations)
+//
+// Starts with the path defined by the FLAG.
+// Fallback is defined by [DEV_CONFIG_FILE_PATH]
 func loadConfigFile() (config models_config.ConfigFile) {
 	log.Infof("Loading configuration... ")
 	config, success := loadConfig()
@@ -37,7 +43,7 @@ func loadConfigFile() (config models_config.ConfigFile) {
 	panic(errorMessage)
 }
 
-// Attempt loading from location as defined by the ENV var
+// loadConfig attempts to load the config from location as defined by the FLAG
 func loadConfig() (file models_config.ConfigFile, success bool) {
 	opts := options.GetAppOptions()
 	path := opts.ConfigFile
@@ -46,13 +52,15 @@ func loadConfig() (file models_config.ConfigFile, success bool) {
 	return loadTriggersFromRelativePath(path)
 }
 
-// Loads actions from '../../assets/sample-actions.yaml'
-// Fallback, or: When running in a development environment
+// loadDevConfig attempts to load the config from [DEV_CONFIG_FILE_PATH]
 func loadDevConfig() (file models_config.ConfigFile, success bool) {
 	log.WithField("filename", DEV_CONFIG_FILE_PATH).Warn("Falling back to DEV Triggers ")
 	return loadTriggersFromRelativePath(DEV_CONFIG_FILE_PATH)
 }
 
+// loadTriggersFromRelativePath takes a relative filepath and attempts to load the file as config file.
+//
+// Utilizes [loadTriggersFromAbsolutePath]
 func loadTriggersFromRelativePath(relPath string) (file models_config.ConfigFile, success bool) {
 	absPath, err := filepath.Abs(relPath)
 	if err != nil {
@@ -63,6 +71,7 @@ func loadTriggersFromRelativePath(relPath string) (file models_config.ConfigFile
 	return loadTriggersFromAbsolutePath(absPath)
 }
 
+// loadTriggersFromRelativePath takes an absolute filepath and attempts to load the file as config file.
 func loadTriggersFromAbsolutePath(absPath string) (file models_config.ConfigFile, success bool) {
 	contextLogger := log.WithField("filename", absPath)
 	contextLogger.Info("Loading actions ")

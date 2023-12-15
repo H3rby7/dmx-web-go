@@ -1,3 +1,4 @@
+// Package setup contains configurations for logging and server as well as service creation
 package setup
 
 import (
@@ -11,11 +12,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-/*
-Configure and start the webserver
-
-  - Configuration is done with respect to the app options
-*/
+// Configure and start the webserver in its own go-routine.
+//
+// Configuration is done with respect to the [AppOptions].
 func SetUpAndStartServer(services *models_services.ApplicationServices) *http.Server {
 	opts := options.GetAppOptions()
 

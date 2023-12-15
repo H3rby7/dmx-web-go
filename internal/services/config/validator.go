@@ -1,3 +1,4 @@
+// Package config allows using a yaml file to define [Trigger]s, [Chase]s and [Event]s.
 package config
 
 import (
@@ -36,13 +37,11 @@ func validateNameUniqueness(triggers []models_config.Chase) (ok bool, errors []v
 	return
 }
 
-/*
-validates the actions file with a set of validators;
-
-ok = true => no errors found
-
-ok = false => errors field contains the validation errors
-*/
+// ValidateFile validates the actions file with a set of validators;
+//
+// * RETURNS true, when no errors found
+//
+// * RETURNS false, if validation fails and returns the validation errors
 func ValidateFile(file models_config.ConfigFile) (ok bool, errors []validation.ValidationError) {
 	ok = true
 	for _, chase := range file.Chases {

@@ -1,25 +1,27 @@
+// Package options defines the DMX [BridgeService] as a tool to forward READ DMX values to the WRITER
 package bridge
 
 import (
 	models_fader "github.com/H3rby7/dmx-web-go/internal/model/fader"
 	"github.com/H3rby7/dmx-web-go/internal/options"
-	"github.com/H3rby7/dmx-web-go/internal/services/dmx"
 	"github.com/H3rby7/dmx-web-go/internal/services/fading"
+	"github.com/H3rby7/dmx-web-go/internal/services/reader"
 	"github.com/H3rby7/usbdmx-golang/controller/enttec/dmxusbpro/messages"
 	log "github.com/sirupsen/logrus"
 )
 
-// BridgeService handles the DMX Bridge
+// BridgeService takes care of bridging DMX values from READ to WRITE
 type BridgeService struct {
 	// is bridging active?
 	isActive bool
 	// Holds DMX data, as DMX starts with channel '1' the index '0' is unused.
 	foreignInput []byte
-	reader       *dmx.DMXReaderService
+	reader       *reader.DMXReaderService
 	writer       *fading.FadingService
 }
 
-func NewBridgeService(reader *dmx.DMXReaderService, writer *fading.FadingService) *BridgeService {
+// NewBridgeService creates a new [BridgeService] instance with proper defaults
+func NewBridgeService(reader *reader.DMXReaderService, writer *fading.FadingService) *BridgeService {
 	log.Debugf("Creating new BridgeService")
 	opts := options.GetAppOptions()
 	channels := opts.DmxChannelCount

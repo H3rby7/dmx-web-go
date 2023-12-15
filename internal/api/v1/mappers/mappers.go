@@ -1,3 +1,4 @@
+// Package apiv1mappers defines mappers from API V1 models to their internal representations.
 package apiv1mappers
 
 import (
@@ -6,11 +7,9 @@ import (
 	models_scene "github.com/H3rby7/dmx-web-go/internal/model/scene"
 )
 
-/*
-Map DMXValueForChannel
-
-From API V1 DTO models to DMX models
-*/
+// Map DMXValueForChannel
+//
+// From API V1 DTO models to DMX models
 func MapDmxValueForChannel(in apiv1dtos.DMXValueForChannel) models_dmx.DMXValueForChannel {
 	return models_dmx.DMXValueForChannel{
 		Channel: in.Channel,
@@ -18,11 +17,9 @@ func MapDmxValueForChannel(in apiv1dtos.DMXValueForChannel) models_dmx.DMXValueF
 	}
 }
 
-/*
-Map Scene
-
-From API V1 DTO models to SCENE models
-*/
+// Map Scene
+//
+// From API V1 DTO models to SCENE models
 func MapScene(in apiv1dtos.Scene) models_scene.Scene {
 	list := make([]models_dmx.DMXValueForChannel, 0, len(in.List))
 	for _, v := range in.List {
