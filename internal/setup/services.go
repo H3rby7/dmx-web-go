@@ -25,7 +25,7 @@ func InitServices() *models_services.ApplicationServices {
 
 	services.ConfigService = config.NewConfigService()
 	services.ChaseService = chase.NewChaseService(services.ConfigService, services.FadingService, services.BridgeService)
-	services.EventSequenceService = event.NewEventSequenceService(services.ConfigService, services.ChaseService)
-	services.TriggerService = trigger.NewTriggerService(services.ConfigService, services.EventSequenceService)
+	services.EventService = event.NewEventService(services.ConfigService, services.ChaseService)
+	services.TriggerService = trigger.NewTriggerService(services.ConfigService, services.EventService)
 	return services
 }

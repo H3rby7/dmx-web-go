@@ -13,11 +13,11 @@ import (
 
 // ApplicationServices is a container to hold the services of the application
 type ApplicationServices struct {
-	BridgeService        *bridge.BridgeService
-	ChaseService         *chase.ChaseService
-	ConfigService        *config.ConfigService
-	EventSequenceService *event.EventSequenceService
-	FadingService        *fading.FadingService
-	DMXReaderService     *dmx.DMXReaderService
-	TriggerService       *trigger.TriggerService
+	BridgeService    *bridge.BridgeService
+	ChaseService     *chase.ChaseService
+	ConfigService    *config.ConfigService
+	EventService     *event.EventService
+	FadingService    *fading.FadingService
+	DMXReaderService *dmx.DMXReaderService
+	TriggerService   *trigger.TriggerService
 }

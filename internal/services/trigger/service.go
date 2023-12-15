@@ -11,19 +11,19 @@ import (
 
 // Stateful construct to handle incoming triggers
 type TriggerService struct {
-	triggers             []models_trigger.Trigger
-	eventSequenceService *event.EventSequenceService
+	triggers     []models_trigger.Trigger
+	eventService *event.EventService
 }
 
 // NewTriggerService creates a new [TriggerService] instance
 //
 // Also loads the triggers from the [ConfigService]
-func NewTriggerService(configService *config.ConfigService, evSeqSvc *event.EventSequenceService) *TriggerService {
+func NewTriggerService(configService *config.ConfigService, evSeqSvc *event.EventService) *TriggerService {
 	log.Debugf("Creating new TriggerService")
 	triggers := configService.GetTriggers()
 	return &TriggerService{
-		triggers:             triggers,
-		eventSequenceService: evSeqSvc,
+		triggers:     triggers,
+		eventService: evSeqSvc,
 	}
 }
 
@@ -60,5 +60,5 @@ func (svc *TriggerService) findTrigger(source string) (ok bool, trigger *models_
 // triggerTrigger transforms the trigger into an event and passes it to the EventRouter
 func (svc *TriggerService) triggerTrigger(trigger models_trigger.Trigger) bool {
 	ev := models_event.Event{Goal: trigger.Goal, Target: trigger.Target}
-	return svc.eventSequenceService.RouteEvent(ev)
+	return svc.eventService.RouteEvent(ev)
 }
