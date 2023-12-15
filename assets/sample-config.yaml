@@ -2,9 +2,12 @@
 ### Example (prototype) of what a trigger file could look like  ###
 ###################################################################
 triggers:
-  - source: "35406887899400"
+  - source: "not_35406887899400"
     goal: chase-reset-and-run
     target: my-sample-chase
+  - source: "35406887899400"
+    goal: event-sequence-next
+    target: my-sample-event-sequence
 
 chases:
   # Name for this chase
@@ -38,3 +41,31 @@ chases:
               value: 0
             - channel: 2
               value: 0
+
+  - name: spot-left-on
+    chase:
+      - delayTimeMillis: 0
+        bridgeActive: false
+        fadeTimeMillis: 300
+        scene:
+          list:
+            - channel: 1
+              value: 255
+
+  - name: spot-left-off
+    chase:
+      - delayTimeMillis: 0
+        bridgeActive: true
+        fadeTimeMillis: 300
+        scene:
+          list:
+            - channel: 1
+              value: 0
+
+eventSequences:
+  - name: my-sample-event-sequence
+    events:
+      - goal: chase-reset-and-run
+        target: spot-left-on
+      - goal: chase-reset-and-run
+        target: spot-left-off
