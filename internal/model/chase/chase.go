@@ -15,7 +15,7 @@ type ChangeBridgeStateFunc func(active bool)
 
 // Internal representation of a Chase.
 type Chase struct {
-	// Name for this trigger - mus be unique
+	// Name for this trigger - must be unique
 	Name string
 	// The sequence of actions (chase) to take.
 	Steps []Step

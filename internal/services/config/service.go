@@ -3,6 +3,7 @@ package config
 import (
 	models_chase "github.com/H3rby7/dmx-web-go/internal/model/chase"
 	models_config "github.com/H3rby7/dmx-web-go/internal/model/config"
+	models_event "github.com/H3rby7/dmx-web-go/internal/model/event"
 	models_trigger "github.com/H3rby7/dmx-web-go/internal/model/trigger"
 	log "github.com/sirupsen/logrus"
 )
@@ -33,4 +34,9 @@ func (svc *ConfigService) GetChases() []models_chase.Chase {
 // Get the triggers mapped to the internal model
 func (svc *ConfigService) GetTriggers() []models_trigger.Trigger {
 	return mapTriggers(svc.config.Triggers)
+}
+
+// Get the event sequences mapped to the internal model
+func (svc *ConfigService) GetEventSequences() []models_event.EventSequence {
+	return mapEventSequences(svc.config.EventSequences)
 }

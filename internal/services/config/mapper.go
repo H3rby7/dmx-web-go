@@ -4,6 +4,7 @@ import (
 	models_chase "github.com/H3rby7/dmx-web-go/internal/model/chase"
 	models_config "github.com/H3rby7/dmx-web-go/internal/model/config"
 	models_dmx "github.com/H3rby7/dmx-web-go/internal/model/dmx"
+	models_event "github.com/H3rby7/dmx-web-go/internal/model/event"
 	models_scene "github.com/H3rby7/dmx-web-go/internal/model/scene"
 	models_trigger "github.com/H3rby7/dmx-web-go/internal/model/trigger"
 )
@@ -85,4 +86,46 @@ func mapTriggers(in []models_config.Trigger) []models_trigger.Trigger {
 		triggers = append(triggers, mapTrigger(v))
 	}
 	return triggers
+}
+
+// Map Event
+//
+// From CONFIG models to EVENT_SEQUENCE models
+func mapEvent(in models_config.Event) models_event.Event {
+	return models_event.Event{
+		Goal:   in.Goal,
+		Target: in.Target,
+	}
+}
+
+// Map Events
+//
+// From CONFIG models to EVENT models
+func mapEvents(in []models_config.Event) []models_event.Event {
+	events := make([]models_event.Event, 0, len(in))
+	for _, v := range in {
+		events = append(events, mapEvent(v))
+	}
+	return events
+}
+
+// Map EventSequence
+//
+// From CONFIG models to EVENT models
+func mapEventSequence(in models_config.EventSequence) models_event.EventSequence {
+	return models_event.EventSequence{
+		Name:   in.Name,
+		Events: mapEvents(in.Events),
+	}
+}
+
+// Map EventSequences
+//
+// From CONFIG models to EVENT models
+func mapEventSequences(in []models_config.EventSequence) []models_event.EventSequence {
+	sequences := make([]models_event.EventSequence, 0, len(in))
+	for _, v := range in {
+		sequences = append(sequences, mapEventSequence(v))
+	}
+	return sequences
 }

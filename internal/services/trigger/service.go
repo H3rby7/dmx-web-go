@@ -1,27 +1,28 @@
 package trigger
 
 import (
+	models_event "github.com/H3rby7/dmx-web-go/internal/model/event"
 	models_trigger "github.com/H3rby7/dmx-web-go/internal/model/trigger"
-	"github.com/H3rby7/dmx-web-go/internal/services/chase"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
+	"github.com/H3rby7/dmx-web-go/internal/services/event"
 	log "github.com/sirupsen/logrus"
 )
 
 // Stateful construct to handle incoming triggers
 type TriggerService struct {
-	triggers     []models_trigger.Trigger
-	chaseService *chase.ChaseService
+	triggers             []models_trigger.Trigger
+	eventSequenceService *event.EventSequenceService
 }
 
 // NewTriggerService creates a new [TriggerService] instance
 //
 // Also loads the triggers from the [ConfigService]
-func NewTriggerService(configService *config.ConfigService, chaseService *chase.ChaseService) *TriggerService {
+func NewTriggerService(configService *config.ConfigService, evSeqSvc *event.EventSequenceService) *TriggerService {
 	log.Debugf("Creating new TriggerService")
 	triggers := configService.GetTriggers()
 	return &TriggerService{
-		triggers:     triggers,
-		chaseService: chaseService,
+		triggers:             triggers,
+		eventSequenceService: evSeqSvc,
 	}
 }
 
@@ -55,16 +56,8 @@ func (svc *TriggerService) findTrigger(source string) (ok bool, trigger *models_
 	return
 }
 
-// triggerTrigger runs an action depending on the goal
+// triggerTrigger transforms the trigger into an event and passes it to the EventRouter
 func (svc *TriggerService) triggerTrigger(trigger models_trigger.Trigger) bool {
-	ll := log.WithField("goal", trigger.Goal).WithField("target", trigger.Target)
-	switch trigger.Goal {
-	// TODO: Other triggers, like start/stop/continue etc.
-	case "chase-reset-and-run":
-		svc.chaseService.StartChaseFromTheTop(trigger.Target)
-	default:
-		ll.Warnf("Goal '%s' is unknown", trigger.Goal)
-		return false
-	}
-	return true
+	ev := models_event.Event{Goal: trigger.Goal, Target: trigger.Target}
+	return svc.eventSequenceService.RouteEvent(ev)
 }

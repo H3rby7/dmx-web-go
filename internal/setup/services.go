@@ -6,6 +6,7 @@ import (
 	"github.com/H3rby7/dmx-web-go/internal/services/chase"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
 	"github.com/H3rby7/dmx-web-go/internal/services/dmx"
+	"github.com/H3rby7/dmx-web-go/internal/services/event"
 	"github.com/H3rby7/dmx-web-go/internal/services/fading"
 	"github.com/H3rby7/dmx-web-go/internal/services/trigger"
 	log "github.com/sirupsen/logrus"
@@ -24,6 +25,7 @@ func InitServices() *models_services.ApplicationServices {
 
 	services.ConfigService = config.NewConfigService()
 	services.ChaseService = chase.NewChaseService(services.ConfigService, services.FadingService, services.BridgeService)
-	services.TriggerService = trigger.NewTriggerService(services.ConfigService, services.ChaseService)
+	services.EventSequenceService = event.NewEventSequenceService(services.ConfigService, services.ChaseService)
+	services.TriggerService = trigger.NewTriggerService(services.ConfigService, services.EventSequenceService)
 	return services
 }

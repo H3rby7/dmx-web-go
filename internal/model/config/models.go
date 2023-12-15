@@ -14,10 +14,11 @@ type Scene struct {
 	List []DMXValueForChannel `yaml:"list"`
 }
 
-// File containing the chases and their triggers
+// YAML structure for config file
 type ConfigFile struct {
-	Triggers []Trigger `yaml:"triggers"`
-	Chases   []Chase   `yaml:"chases"`
+	Triggers       []Trigger       `yaml:"triggers"`
+	Chases         []Chase         `yaml:"chases"`
+	EventSequences []EventSequence `yaml:"eventSequences"`
 }
 
 // A mapping of trigger source UID to trigger name
@@ -62,4 +63,20 @@ type Step struct {
 	//
 	// *Note: The bridge does not support being faded in/out yet.*
 	FadeTimeMillis int64 `yaml:"fadeTimeMillis"`
+}
+
+// External representation of an event sequence (chain of triggered events).
+type EventSequence struct {
+	// Name for this chase - must be unique
+	Name string `yaml:"name" binding:"required"`
+	// The sequence of actions (chase) to take.
+	Events []Event `yaml:"events" binding:"required"`
+}
+
+// External representation of an event sequence (chain of triggered events).
+type Event struct {
+	// Goal of the event
+	Goal string `yaml:"goal" binding:"required"`
+	// Name of the target to work with, e.G. the name of a chase
+	Target string `yaml:"target" binding:"required"`
 }

@@ -6,16 +6,18 @@ import (
 	"github.com/H3rby7/dmx-web-go/internal/services/chase"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
 	"github.com/H3rby7/dmx-web-go/internal/services/dmx"
+	"github.com/H3rby7/dmx-web-go/internal/services/event"
 	"github.com/H3rby7/dmx-web-go/internal/services/fading"
 	"github.com/H3rby7/dmx-web-go/internal/services/trigger"
 )
 
 // ApplicationServices is a container to hold the services of the application
 type ApplicationServices struct {
-	BridgeService    *bridge.BridgeService
-	ChaseService     *chase.ChaseService
-	ConfigService    *config.ConfigService
-	FadingService    *fading.FadingService
-	DMXReaderService *dmx.DMXReaderService
-	TriggerService   *trigger.TriggerService
+	BridgeService        *bridge.BridgeService
+	ChaseService         *chase.ChaseService
+	ConfigService        *config.ConfigService
+	EventSequenceService *event.EventSequenceService
+	FadingService        *fading.FadingService
+	DMXReaderService     *dmx.DMXReaderService
+	TriggerService       *trigger.TriggerService
 }
