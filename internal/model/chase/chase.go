@@ -1,3 +1,4 @@
+// Package models_chase contains the internal representations of [Chase] and [Step]
 package models_chase
 
 import (

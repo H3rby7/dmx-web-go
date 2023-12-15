@@ -1,3 +1,4 @@
+// Package trigger hosts the TriggerService, that maps incoming triggers to events
 package trigger
 
 import (

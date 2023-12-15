@@ -1,3 +1,8 @@
+// Package models_event defines [Event] and [EventSequence] as internal structures.
+//
+// These structures are used to create stateful trigger behaviour.
+//
+// Also an [models_trigger.Trigger] will be mapped to an event for architectural reasons.
 package models_event
 
 import log "github.com/sirupsen/logrus"

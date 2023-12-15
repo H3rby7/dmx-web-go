@@ -1,4 +1,4 @@
-// Package event hosts the EventSequenceService and provides means to work with Event Sequences
+// Package event hosts the EventService and provides means to work with Events and Event Sequences
 package event
 
 import (

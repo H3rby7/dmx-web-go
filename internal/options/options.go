@@ -1,3 +1,4 @@
+// Package options defines and bundles all [AppOptions]
 package options
 
 import (
@@ -6,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// AppOptions serves as container to hold all options in one spot.
 type AppOptions struct {
 	HttpPort         string
 	Static           string
@@ -57,11 +59,14 @@ func InitAppOptions() {
 	}
 }
 
-// Get the options
+// GetAppOptions returns the options instance
 func GetAppOptions() AppOptions {
 	return optionsInstance
 }
 
+// CanWriteDMX checks if we should be able to write to DMX
+//
+// If not, returns FALSE and the objection (reason), why we cannot
 func (opts *AppOptions) CanWriteDMX() (ok bool, objection string) {
 	if opts.DmxWritePort == "" {
 		return false, "No DMX writer specified"
@@ -69,6 +74,9 @@ func (opts *AppOptions) CanWriteDMX() (ok bool, objection string) {
 	return true, ""
 }
 
+// CanReadDMX checks if we should be able to read from DMX
+//
+// If not, returns FALSE and the objection (reason), why we cannot
 func (opts *AppOptions) CanReadDMX() (ok bool, objection string) {
 	if opts.DmxReadPort == "" {
 		return false, "No DMX reader specified"
@@ -76,6 +84,9 @@ func (opts *AppOptions) CanReadDMX() (ok bool, objection string) {
 	return true, ""
 }
 
+// CanBridge checks if we should be able to bridge INcoming DMX to OUTgoing DMX
+//
+// If not, returns FALSE and the objection (reason), why we cannot
 func (opts *AppOptions) CanBridge() (ok bool, objection string) {
 	if !opts.DmxBridge {
 		return false, "DMX-Bridge flag is FALSE"
