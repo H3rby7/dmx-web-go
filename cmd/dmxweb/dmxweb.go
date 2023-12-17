@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/H3rby7/dmx-web-go/internal/dmx"
+	models_services "github.com/H3rby7/dmx-web-go/internal/model/services"
 	"github.com/H3rby7/dmx-web-go/internal/options"
 	"github.com/H3rby7/dmx-web-go/internal/setup"
 
@@ -18,22 +18,25 @@ import (
 func main() {
 	options.InitAppOptions()
 	setup.SetUpLogging()
-	setup.SetUpDMX()
-	srv := setup.SetUpAndStartServer()
+	svcs := setup.InitServices()
 
-	handleShutdown(srv)
+	srv := setup.SetUpAndStartServer(svcs)
+
+	handleShutdown(srv, svcs)
 }
 
 /*
 Waits until receiving a shutdown command, then runs cleanup/shutdown calls
 */
-func handleShutdown(srv *http.Server) {
+func handleShutdown(srv *http.Server, services *models_services.ApplicationServices) {
+	log.Tracef("Preparing to handle shutdown commands... ")
 	// Wait for quit signal(s)
 	quit := make(chan os.Signal, 1)
 	// kill (no param) default send syscall.SIGTERM
 	// kill -2 is syscall.SIGINT
 	// kill -9 is syscall.SIGKILL but can't be catch, so don't need add it
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	log.Debugf("Ready to handle shutdown commands.")
 	<-quit
 
 	log.Infof("Received shutdown command - Starting to clean up...")
@@ -47,6 +50,10 @@ func handleShutdown(srv *http.Server) {
 	} else {
 		log.Infof("Server was shut down gracefully")
 	}
-	dmx.Shutdown()
+
+	services.FadingService.Stop()
+	services.DMXReaderService.DisconnectDMX()
+	services.FadingService.DisconnectDMX()
+
 	log.Infof("Finished cleaning up")
 }

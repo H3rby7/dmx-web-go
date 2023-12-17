@@ -1,3 +1,4 @@
+// Package setup contains configurations for logging and server as well as service creation
 package setup
 
 import (
@@ -12,7 +13,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Configures logging with respect to the app options
+// Configures logging with respect to the [AppOptions]
 func SetUpLogging() {
 	opts := options.GetAppOptions()
 	log.SetLevel(opts.LogLevel)

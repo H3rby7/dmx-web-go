@@ -1,4 +1,7 @@
-package dmxfader
+// Package models_fader defines [DMXFader] as a central piece of the DMX-Web architecture.
+//
+// The [DMXFader] takes care of the value of one DMX channel and allows fading the value.
+package models_fader
 
 import (
 	"time"
@@ -6,6 +9,25 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// TICK_INTERVAL_MILLIS can also be seen as the fading framerate.
+const TICK_INTERVAL_MILLIS = 1000 / 25 // 25 updates per second
+
+// A value of 1 millisecond results in immediate fading
+const FADE_IMMEDIATELY int64 = 1
+
+// NewDMXFader creates a new [DMXFader] instance with defaults for the given channel
+func NewDMXFader(channel int16) DMXFader {
+	return DMXFader{
+		isActive: false,
+		channel:  channel,
+	}
+}
+
+// DMXFader is a struct following the operator pattern.
+//
+// At any given time the struct aims to achieve the targetValue within the deadline.
+//
+// It does so by adjusting the currentValue in a linear fashion towards the targetValue
 type DMXFader struct {
 	// Is this fader working to reach a new value?
 	isActive bool
@@ -19,11 +41,9 @@ type DMXFader struct {
 	deadline time.Time
 }
 
-/*
-	Give the fader a new target and deadline
-
-To switch a value immediately simply pass '0' as fadeTimeMillis
-*/
+// Give the fader a new target and deadline
+//
+// To switch a value immediately simply pass '0' as fadeTimeMillis
 func (f *DMXFader) FadeTo(targetValue byte, fadeTimeMillis int64) {
 	f.targetValue = targetValue
 	f.deadline = time.Now().Add(time.Millisecond * time.Duration(fadeTimeMillis))
@@ -31,11 +51,9 @@ func (f *DMXFader) FadeTo(targetValue byte, fadeTimeMillis int64) {
 	log.Debugf("Fading channel '%v' from '%v' to '%v' until %v", f.channel, f.currentValue, f.targetValue, f.deadline)
 }
 
-/*
-Calculates and updates internal state
-
-Returns the new value for convenience
-*/
+// Calculates and updates internal state
+//
+// Returns the new value for convenience
 func (f *DMXFader) UpdateValue() byte {
 	deltaT := f.deadline.UnixMilli() - time.Now().UnixMilli()
 	if deltaT < TICK_INTERVAL_MILLIS {
@@ -67,4 +85,11 @@ func (f *DMXFader) GetCurrentValue() byte {
 // Is this fader active, or already done?
 func (f *DMXFader) IsActive() bool {
 	return f.isActive
+}
+
+// Set internal value
+//
+// Use sparsely!
+func (f *DMXFader) SetValue(val float32) {
+	f.currentValue = val
 }

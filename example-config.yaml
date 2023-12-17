@@ -1,0 +1,71 @@
+###################################################################
+### Example (prototype) of what a trigger file could look like  ###
+###################################################################
+triggers:
+  - source: "not_35406887899400"
+    goal: chase-reset-and-run
+    target: my-sample-chase
+  - source: "35406887899400"
+    goal: event-sequence-next
+    target: my-sample-event-sequence
+
+chases:
+  # Name for this chase
+  - name: my-sample-chase
+    # The sequence with delay times
+    chase:
+      - delayTimeMillis: 0 # This happens immediately
+        bridgeActive: false # disable the DMX bridge
+        fadeTimeMillis: 500 # Time to fade in milliseconds
+        # The scene content
+        scene:
+          list:
+            - channel: 1
+              value: 255
+            - channel: 2
+              value: 255
+      - delayTimeMillis: 500 # This happens 500ms after the previous scene STARTED fading in
+        fadeTimeMillis: 500
+        scene:
+          list:
+            - channel: 1
+              value: 100
+            - channel: 2
+              value: 100
+      - delayTimeMillis: 5000 # Happens 5s after the previous scene STARTED fading in
+        bridgeActive: true # enable the DMX bridge
+        fadeTimeMillis: 500 # Time to fade back to the bridge
+        scene:
+          list:
+            - channel: 1
+              value: 0
+            - channel: 2
+              value: 0
+
+  - name: spot-left-on
+    chase:
+      - delayTimeMillis: 0
+        bridgeActive: false
+        fadeTimeMillis: 300
+        scene:
+          list:
+            - channel: 1
+              value: 255
+
+  - name: spot-left-off
+    chase:
+      - delayTimeMillis: 0
+        bridgeActive: true
+        fadeTimeMillis: 300
+        scene:
+          list:
+            - channel: 1
+              value: 0
+
+eventSequences:
+  - name: my-sample-event-sequence
+    events:
+      - goal: chase-reset-and-run
+        target: spot-left-on
+      - goal: chase-reset-and-run
+        target: spot-left-off

@@ -10,6 +10,7 @@ require (
 	github.com/H3rby7/usbdmx-golang v0.4.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -36,7 +37,6 @@ require (
 	golang.org/x/net v0.15.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 require (
