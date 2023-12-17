@@ -4,6 +4,7 @@ Offers simplistic API and converts calls into DMX commands.
 
 - [DMX Webserver](#dmx-webserver)
 - [Running](#running)
+  - [Configuring Actions](#configuring-actions)
   - [Example CURLs](#example-curls)
     - [DMX API](#dmx-api)
     - [Trigger API](#trigger-api)
@@ -29,6 +30,13 @@ If running/debugging via VS-Code, make sure to pass the necessary flags as args 
 ```
 
 *Note: Boolean flags require the use of `=` eg. `-myflag=[true|false]`*
+
+## Configuring Actions
+
+Using a [config file](./example-config.yaml) you can define 
+trigger sources, chases and event sequences to interact with the DMX output and bridge.
+
+The `config` flag allows to specify a different config file.
 
 ## Example CURLs
 

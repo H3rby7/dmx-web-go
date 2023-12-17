@@ -31,7 +31,7 @@ func InitAppOptions() {
 	var err error
 	httpPort := flag.String("http-port", "8080", "HTTP Server port")
 	static := flag.String("static", "", "Relative path for static file serving. Leave blank for no serving.")
-	configFile := flag.String("config", "./config.yaml", "Relative path to the config file")
+	configFile := flag.String("config", "./example-config.yaml", "Relative path to the config file")
 	dmxChannels := flag.Int("dmx-channels", 512, "DMX channel count. Lower count saves some energy as less needs to be sent")
 	dmxReadBaudrate := flag.Int("dmx-read-baud", 57600, "Baudrate for the reading device")
 	dmxReadPort := flag.String("dmx-read-port", "", "Input interface (e.g. COM4 OR /dev/tty.usbserial)")
