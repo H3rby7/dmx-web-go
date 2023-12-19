@@ -33,7 +33,7 @@ If running/debugging via VS-Code, make sure to pass the necessary flags as args 
 
 ## Configuring Actions
 
-Using a [config file](./example-config.yaml) you can define 
+Using a [config file](./configs/example.yaml) you can define 
 trigger sources, chases and event sequences to interact with the DMX output and bridge.
 
 The `config` flag allows to specify a different config file.
