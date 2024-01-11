@@ -9,6 +9,7 @@ Offers simplistic API and converts calls into DMX commands.
     - [DMX API](#dmx-api)
     - [Trigger API](#trigger-api)
   - [Example WWW](#example-www)
+- [DEV Todos](#dev-todos)
 
 # Running
 
@@ -67,3 +68,10 @@ Run with `-static ./www` as example to also have a static file server, serving a
 ```sh
 go run cmd\dmxweb\dmxweb.go -dmx-write-port COM5 -log-level debug -static ./www
 ```
+
+# DEV Todos
+
+- [ ] Bridge Fade IN/OUT at chase
+- [ ] Log who is responsible for DMX updates
+- [ ] Bridge Deactivate clear all, only clear used values?
+- [ ] 

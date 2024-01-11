@@ -70,6 +70,7 @@ func (b *BridgeService) Deactivate() {
 	}
 	log.Info("Bridge deactivated")
 	b.isActive = false
+	b.writer.ClearAll()
 }
 
 // Register On-DMX-Change Channel
