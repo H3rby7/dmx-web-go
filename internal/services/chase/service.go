@@ -65,11 +65,11 @@ func (svc *ChaseService) renderDelegate(scene models_scene.Scene, fadeTimeMillis
 }
 
 // bridgeDelegate implements [models_chase.ChangeBridgeStateFunc]
-func (svc *ChaseService) bridgeDelegate(active bool) {
+func (svc *ChaseService) bridgeDelegate(active bool, fadeDurationMillis int64) {
 	log.Debugf("Setting Bridge State... ")
 	if active {
-		svc.bridgeService.Activate()
+		svc.bridgeService.Activate(fadeDurationMillis)
 	} else {
-		svc.bridgeService.Deactivate()
+		svc.bridgeService.Deactivate(fadeDurationMillis)
 	}
 }

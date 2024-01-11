@@ -33,7 +33,7 @@ func NewBridgeService(reader *reader.DMXReaderService, writer *fading.FadingServ
 	}
 
 	if ok, objection := opts.CanBridge(); ok {
-		b.Activate()
+		b.Activate(models_fader.FADE_IMMEDIATELY)
 		go b.bridgeDMX()
 	} else {
 		log.Infof("%s -> Skipping to bridge.", objection)
@@ -45,32 +45,32 @@ func NewBridgeService(reader *reader.DMXReaderService, writer *fading.FadingServ
 // Activate the DMX bridge
 //
 // This enables passing on any data that is read
-func (b *BridgeService) Activate() {
+func (b *BridgeService) Activate(fadeDurationMillis int64) {
 	if b.isActive {
 		log.Tracef("Bridge already active")
 		return
 	}
 	b.isActive = true
-	log.Info("Bridge activated")
+	log.Infof("Activating bridge over %v millis", fadeDurationMillis)
 	opts := options.GetAppOptions()
 	if ok, objection := opts.CanBridge(); !ok {
 		log.Infof("%s -> Skipping updateAll", objection)
 	} else {
-		b.updateAll()
+		b.updateAll(fadeDurationMillis)
 	}
 }
 
 // Deactivate the DMX bridge
 //
 // This stops passing on data that is read
-func (b *BridgeService) Deactivate() {
+func (b *BridgeService) Deactivate(fadeDurationMillis int64) {
 	if !b.isActive {
 		log.Tracef("Bridge already inactive")
 		return
 	}
-	log.Info("Bridge deactivated")
+	log.Infof("Deactivating bridge of %v millis", fadeDurationMillis)
 	b.isActive = false
-	b.writer.ClearAll()
+	b.clearOutput(fadeDurationMillis)
 }
 
 // Register On-DMX-Change Channel
@@ -91,13 +91,25 @@ func (b *BridgeService) bridgeDMX() {
 }
 
 // Update the writer with ALL stored values, if bridge is active
-func (b *BridgeService) updateAll() {
+func (b *BridgeService) updateAll(fadeDurationMillis int64) {
 	if !b.isActive {
 		log.Debugf("Skipping update, because bridge is not active")
 		return
 	}
-	log.Debugf("Updating with %v", b.foreignInput)
+	log.Debugf("Updating over %v millis with %v", fadeDurationMillis, b.foreignInput)
 	for i := range b.foreignInput {
-		b.writer.FadeTo(int16(i), b.foreignInput[i], models_fader.FADE_IMMEDIATELY)
+		b.writer.FadeTo(int16(i), b.foreignInput[i], fadeDurationMillis)
+	}
+}
+
+// Clear Bridge Output over time
+//
+// Fade any channel, that is != 0 to 0
+func (b *BridgeService) clearOutput(fadeDurationMillis int64) {
+	log.Infof("Clearing bridge output over %v millis", fadeDurationMillis)
+	for k, v := range b.foreignInput {
+		if v != 0 {
+			b.writer.FadeTo(int16(k), v, fadeDurationMillis)
+		}
 	}
 }

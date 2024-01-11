@@ -71,6 +71,4 @@ go run cmd\dmxweb\dmxweb.go -dmx-write-port COM5 -log-level debug -static ./www
 
 # DEV Todos
 
-- [ ] Bridge Fade IN/OUT at chase
 - [ ] Log who is responsible for DMX updates
-- [ ] 

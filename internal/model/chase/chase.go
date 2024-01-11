@@ -12,7 +12,7 @@ import (
 type SceneRenderFunc func(scene models_scene.Scene, fadeTimeMillis int64)
 
 // ChangeBridgeStateFunc defines the function to turn the DMXBridge on/off
-type ChangeBridgeStateFunc func(active bool)
+type ChangeBridgeStateFunc func(active bool, fadeDurationMillis int64)
 
 // Internal representation of a Chase.
 type Chase struct {
@@ -89,15 +89,32 @@ func (c *Chase) renderNextStep() {
 
 	ll.Debugf("Rendering step '%d'", c.nextStep)
 	nextStep := c.getNextStep()
-	if c.renderDelegate == nil {
-		ll.Warnf("Render delegate unset, skipping")
-	} else {
-		c.renderDelegate(nextStep.Scene, nextStep.FadeTimeMillis)
+	if !nextStep.BridgeActive {
+		// When deactivating, deactivate bridge first, so the "render" step can already overwrite values.
+		ll.Trace("Deactivating bridge prior to step rendering")
+		c.callBridge(nextStep)
 	}
+	c.callRender(nextStep)
+	if nextStep.BridgeActive {
+		// When activating, call bridge last to overwrite any fadeouts from render, if applicable
+		ll.Trace("Activating bridge after step rendering")
+		c.callBridge(nextStep)
+	}
+}
+
+func (c *Chase) callBridge(s Step) {
 	if c.bridgeDelegate == nil {
-		ll.Warnf("Bridge delegate unset, skipping")
+		log.Warnf("Bridge delegate unset, skipping")
 	} else {
-		c.bridgeDelegate(nextStep.BridgeActive)
+		c.bridgeDelegate(s.BridgeActive, s.FadeTimeMillis)
+	}
+}
+
+func (c *Chase) callRender(s Step) {
+	if c.renderDelegate == nil {
+		log.Warnf("Render delegate unset, skipping")
+	} else {
+		c.renderDelegate(s.Scene, s.FadeTimeMillis)
 	}
 }
 

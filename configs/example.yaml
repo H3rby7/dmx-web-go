@@ -34,16 +34,13 @@ chases:
               value: 100
       - delayTimeMillis: 5000 # Happens 5s after the previous scene STARTED fading in
         fadeTimeMillis: 500
+        bridgeActive: true # enable the DMX bridge
         scene:
           list:
             - channel: 1
               value: 0
             - channel: 2
               value: 0
-      # Workaround, re-activate the bridge, after the used channels are faded to 0
-      - delayTimeMillis: 500
-        bridgeActive: true # enable the DMX bridge
-
   - name: spot-left-on
     chase:
       - delayTimeMillis: 0
@@ -58,13 +55,11 @@ chases:
     chase:
       - delayTimeMillis: 0
         fadeTimeMillis: 300
+        bridgeActive: true
         scene:
           list:
             - channel: 1
               value: 0
-      # Workaround, re-activate the bridge, after the used channels are faded to 0
-      - delayTimeMillis: 300
-        bridgeActive: true
 
 eventSequences:
   - name: my-sample-event-sequence
