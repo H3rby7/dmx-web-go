@@ -73,5 +73,4 @@ go run cmd\dmxweb\dmxweb.go -dmx-write-port COM5 -log-level debug -static ./www
 
 - [ ] Bridge Fade IN/OUT at chase
 - [ ] Log who is responsible for DMX updates
-- [ ] Bridge Deactivate clear all, only clear used values?
 - [ ] 

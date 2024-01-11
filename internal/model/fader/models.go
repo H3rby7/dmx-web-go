@@ -45,6 +45,11 @@ type DMXFader struct {
 //
 // To switch a value immediately simply pass '0' as fadeTimeMillis
 func (f *DMXFader) FadeTo(targetValue byte, fadeTimeMillis int64) {
+	// Check if the fader is not fading right now and already has the target value
+	if !f.isActive && (byte(f.currentValue) == targetValue) {
+		log.Tracef("Skipping channel '%v', as it already rests at target value '%v'", f.channel, targetValue)
+		return
+	}
 	f.targetValue = targetValue
 	f.deadline = time.Now().Add(time.Millisecond * time.Duration(fadeTimeMillis))
 	f.isActive = true
