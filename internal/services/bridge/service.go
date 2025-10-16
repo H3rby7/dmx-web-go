@@ -1,4 +1,4 @@
-// Package options defines the DMX [BridgeService] as a tool to forward READ DMX values to the WRITER
+// Package bridge defines the DMX [BridgeService] as a tool to forward READ DMX values to the WRITER
 package bridge
 
 import (
