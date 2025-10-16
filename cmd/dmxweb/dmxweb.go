@@ -18,6 +18,7 @@ import (
 func main() {
 	options.InitAppOptions()
 	setup.SetUpLogging()
+	log.Debugf("Running with options:\n%#v", options.GetAppOptions())
 	svcs := setup.InitServices()
 
 	srv := setup.SetUpAndStartServer(svcs)
@@ -34,7 +35,7 @@ func handleShutdown(srv *http.Server, services *models_services.ApplicationServi
 	quit := make(chan os.Signal, 1)
 	// kill (no param) default send syscall.SIGTERM
 	// kill -2 is syscall.SIGINT
-	// kill -9 is syscall.SIGKILL but can't be catch, so don't need add it
+	// kill -9 is syscall.SIGKILL but can't be caught, so don't need add it
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	log.Debugf("Ready to handle shutdown commands.")
 	<-quit
