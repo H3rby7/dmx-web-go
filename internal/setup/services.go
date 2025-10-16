@@ -3,11 +3,13 @@ package setup
 
 import (
 	models_services "github.com/H3rby7/dmx-web-go/internal/model/services"
+	"github.com/H3rby7/dmx-web-go/internal/options"
 	"github.com/H3rby7/dmx-web-go/internal/services/bridge"
 	"github.com/H3rby7/dmx-web-go/internal/services/chase"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
 	"github.com/H3rby7/dmx-web-go/internal/services/enttec/dmxusbpro"
 	"github.com/H3rby7/dmx-web-go/internal/services/event"
+	"github.com/H3rby7/dmx-web-go/internal/services/printer"
 	"github.com/H3rby7/dmx-web-go/internal/services/trigger"
 	log "github.com/sirupsen/logrus"
 )
@@ -21,7 +23,18 @@ func InitServices() *models_services.ApplicationServices {
 
 	services.DMXReaderService = dmxusbpro.NewDMXReaderService()
 	services.FadingService = dmxusbpro.NewFadingService()
-	services.BridgeService = bridge.NewBridgeService(services.DMXReaderService, services.FadingService)
+
+	opts := options.GetAppOptions()
+	if willBridge, objection := opts.CanBridge(); willBridge {
+		services.BridgeService = bridge.NewBridgeService(services.DMXReaderService, services.FadingService)
+	} else {
+		log.Infof("%s -> Skipping to bridge.", objection)
+		if ok, _ := opts.CanReadDMX(); ok {
+			log.Infof("Creating DMX Logger to utilize the READability.")
+			pSvc := printer.NewDMXLoggerService(services.DMXReaderService)
+			go pSvc.PrintDMX()
+		}
+	}
 
 	services.ConfigService = config.NewConfigService()
 	services.ChaseService = chase.NewChaseService(services.ConfigService, services.FadingService, services.BridgeService)
