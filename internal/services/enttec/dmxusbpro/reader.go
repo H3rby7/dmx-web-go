@@ -63,11 +63,10 @@ func (s *DMXReaderService) ConnectDMX() {
 		log.Fatalf("Failed to connect DMX Controller for READING: %s", err)
 		return
 	}
+	log.Infof("Switching Read Mode to 'changes only'")
+	reader.SwitchReadMode(1)
+
 	s.reader = reader
-	if opts.DmxBridge {
-		log.Infof("Switching Read Mode to 'changes only'")
-		s.reader.SwitchReadMode(1)
-	}
 }
 
 // DisconnectDMX disconnects the internal reader.
