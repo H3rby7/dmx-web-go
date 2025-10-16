@@ -17,7 +17,7 @@ type ApplicationServices struct {
 	ChaseService     *chase.ChaseService
 	ConfigService    *config.ConfigService
 	EventService     *event.EventService
-	FadingService    *fading.FadingService
-	DMXReaderService *reader.DMXReaderService
+	FadingService    fading.DMXFader
+	DMXReaderService reader.DMXReader
 	TriggerService   *trigger.TriggerService
 }

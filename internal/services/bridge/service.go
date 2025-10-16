@@ -6,7 +6,6 @@ import (
 	"github.com/H3rby7/dmx-web-go/internal/options"
 	"github.com/H3rby7/dmx-web-go/internal/services/fading"
 	"github.com/H3rby7/dmx-web-go/internal/services/reader"
-	"github.com/H3rby7/usbdmx-golang/controller/enttec/dmxusbpro/messages"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -15,21 +14,21 @@ type BridgeService struct {
 	// is bridging active?
 	isActive bool
 	// Holds DMX data, as DMX starts with channel '1' the index '0' is unused.
-	foreignInput []byte
-	reader       *reader.DMXReaderService
-	writer       *fading.FadingService
+	foreignInput  []byte
+	reader        reader.DMXReader
+	fadingService fading.DMXFader
 }
 
 // NewBridgeService creates a new [BridgeService] instance with proper defaults
-func NewBridgeService(reader *reader.DMXReaderService, writer *fading.FadingService) *BridgeService {
+func NewBridgeService(reader reader.DMXReader, fadingService fading.DMXFader) *BridgeService {
 	log.Debugf("Creating new BridgeService")
 	opts := options.GetAppOptions()
 	channels := opts.DmxChannelCount
 	b := &BridgeService{
-		isActive:     false,
-		foreignInput: make([]byte, channels+1),
-		reader:       reader,
-		writer:       writer,
+		isActive:      false,
+		foreignInput:  make([]byte, channels+1),
+		reader:        reader,
+		fadingService: fadingService,
 	}
 
 	if ok, objection := opts.CanBridge(); ok {
@@ -75,17 +74,12 @@ func (b *BridgeService) Deactivate(fadeDurationMillis int64) {
 
 // Register On-DMX-Change Channel
 func (b *BridgeService) bridgeDMX() {
-	c := make(chan messages.EnttecDMXUSBProApplicationMessage)
+	c := make(chan map[int]byte)
 	go b.reader.OnDMXChange(c)
-	for msg := range c {
-		cs, err := messages.ToChangeSet(msg)
-		if err != nil {
-			log.Warnf("Could not convert to changeset, but read \tlabel=%v \tdata=%v", msg.GetLabel(), msg.GetPayload())
-		} else {
-			for k, v := range cs {
-				b.foreignInput[k] = v
-				b.writer.FadeTo(int16(k), v, models_fader.FADE_IMMEDIATELY)
-			}
+	for cs := range c {
+		for k, v := range cs {
+			b.foreignInput[k] = v
+			b.fadingService.FadeTo(int16(k), v, models_fader.FADE_IMMEDIATELY)
 		}
 	}
 }
@@ -98,7 +92,7 @@ func (b *BridgeService) updateAll(fadeDurationMillis int64) {
 	}
 	log.Debugf("Updating over %v millis with %v", fadeDurationMillis, b.foreignInput)
 	for i := range b.foreignInput {
-		b.writer.FadeTo(int16(i), b.foreignInput[i], fadeDurationMillis)
+		b.fadingService.FadeTo(int16(i), b.foreignInput[i], fadeDurationMillis)
 	}
 }
 
@@ -109,7 +103,7 @@ func (b *BridgeService) clearOutput(fadeDurationMillis int64) {
 	log.Infof("Clearing bridge output over %v millis", fadeDurationMillis)
 	for k, v := range b.foreignInput {
 		if v != 0 {
-			b.writer.FadeTo(int16(k), v, fadeDurationMillis)
+			b.fadingService.FadeTo(int16(k), v, fadeDurationMillis)
 		}
 	}
 }

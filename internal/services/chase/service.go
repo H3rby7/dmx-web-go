@@ -13,14 +13,14 @@ import (
 // ChaseService handles chases and actions on chases
 type ChaseService struct {
 	chases        []models_chase.Chase
-	fadingService *fading.FadingService
+	fadingService fading.DMXFader
 	bridgeService *bridge.BridgeService
 }
 
 // NewChaseService creates a new [ChaseService] instance
 //
 // Also loads the chases from the [ConfigService]
-func NewChaseService(configService *config.ConfigService, fadingService *fading.FadingService, bridgeService *bridge.BridgeService) *ChaseService {
+func NewChaseService(configService *config.ConfigService, fadingService fading.DMXFader, bridgeService *bridge.BridgeService) *ChaseService {
 	log.Debugf("Creating new ChaseService")
 	chases := configService.GetChases()
 	return &ChaseService{

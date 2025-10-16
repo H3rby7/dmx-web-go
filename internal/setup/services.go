@@ -6,9 +6,8 @@ import (
 	"github.com/H3rby7/dmx-web-go/internal/services/bridge"
 	"github.com/H3rby7/dmx-web-go/internal/services/chase"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
+	"github.com/H3rby7/dmx-web-go/internal/services/enttec/dmxusbpro"
 	"github.com/H3rby7/dmx-web-go/internal/services/event"
-	"github.com/H3rby7/dmx-web-go/internal/services/fading"
-	"github.com/H3rby7/dmx-web-go/internal/services/reader"
 	"github.com/H3rby7/dmx-web-go/internal/services/trigger"
 	log "github.com/sirupsen/logrus"
 )
@@ -20,8 +19,8 @@ func InitServices() *models_services.ApplicationServices {
 	log.Infof("Initializing Application Services... ")
 	services := &models_services.ApplicationServices{}
 
-	services.DMXReaderService = reader.NewDMXReaderService()
-	services.FadingService = fading.NewFadingService()
+	services.DMXReaderService = dmxusbpro.NewDMXReaderService()
+	services.FadingService = dmxusbpro.NewFadingService()
 	services.BridgeService = bridge.NewBridgeService(services.DMXReaderService, services.FadingService)
 
 	services.ConfigService = config.NewConfigService()
