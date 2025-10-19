@@ -112,3 +112,18 @@ function switchToScene(scene) {
   const dimmerValues = Array.from(chMap, ([channel, value]) => ({ channel, value }));
   fadeMultipleDMX(dimmerValues, 2000);
 }
+
+function trigger(source) {
+  const url = `${backendBaseUrl}/trigger`;
+  return () => {
+    fetch(url, {
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({ source }),
+      method: "POST"
+    })
+      .catch(() => feedback("ERROR!"))
+      .then(() => feedback("SUCCESS!"))
+  }
+}
