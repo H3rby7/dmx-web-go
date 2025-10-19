@@ -1,0 +1,58 @@
+###################################################################
+###            Config for Normal, Black, Umbau                  ###
+###################################################################
+triggers:
+  - source: "source.black"
+    goal: event-sequence-next
+    target: to-black
+  - source: "source.normal"
+    goal: event-sequence-next
+    target: to-normal
+  - source: "source.umbau"
+    goal: event-sequence-next
+    target: to-umbau
+
+chases:
+  - name: black
+    chase:
+      - delayTimeMillis: 0
+        bridgeActive: false
+        fadeTimeMillis: 1000
+        scene:
+          list: []
+
+  - name: normal
+    chase:
+      - delayTimeMillis: 0
+        bridgeActive: true
+        fadeTimeMillis: 600
+        scene:
+          list: []
+
+  - name: umbau
+    chase:
+      - delayTimeMillis: 0
+        bridgeActive: false
+        fadeTimeMillis: 1000
+        scene:
+          list:
+          - channel: 1
+            value: 50
+          - channel: 2
+            value: 50
+          - channel: 3
+            value: 50
+
+eventSequences:
+  - name: to-black
+    events:
+      - goal: chase-reset-and-run
+        target: black
+  - name: to-normal
+    events:
+      - goal: chase-reset-and-run
+        target: normal
+  - name: to-umbau
+    events:
+      - goal: chase-reset-and-run
+        target: umbau

@@ -29,7 +29,8 @@
       "cwd": "${workspaceFolder}",
       "args": [
         "-log-level", "debug",
-        "-static", "www"
+        "-static", "www",
+        "-config", "./configs/example2.yaml"
       ]
     },
     {
