@@ -45,13 +45,17 @@ func NewBridgeService(reader reader.DMXReader, fadingService fading.DMXFader) *B
 //
 // This enables passing on any data that is read
 func (b *BridgeService) Activate(fadeDurationMillis int64) {
+	opts := options.GetAppOptions()
+	if ok, objection := opts.CanBridge(); !ok {
+		log.Tracef("%s -> Skipping 'activate' bridge.", objection)
+		return
+	}
 	if b.isActive {
 		log.Tracef("Bridge already active")
 		return
 	}
 	b.isActive = true
 	log.Infof("Activating bridge over %v millis", fadeDurationMillis)
-	opts := options.GetAppOptions()
 	if ok, objection := opts.CanBridge(); !ok {
 		log.Infof("%s -> Skipping updateAll", objection)
 	} else {
@@ -63,6 +67,11 @@ func (b *BridgeService) Activate(fadeDurationMillis int64) {
 //
 // This stops passing on data that is read
 func (b *BridgeService) Deactivate(fadeDurationMillis int64) {
+	opts := options.GetAppOptions()
+	if ok, objection := opts.CanBridge(); !ok {
+		log.Tracef("%s -> Skipping 'deactivate' bridge.", objection)
+		return
+	}
 	if !b.isActive {
 		log.Tracef("Bridge already inactive")
 		return

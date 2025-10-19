@@ -29,12 +29,10 @@ func InitServices() *models_services.ApplicationServices {
 	} else {
 		services.FadingService = dmxusbpro.NewFadingService()
 	}
+	services.BridgeService = bridge.NewBridgeService(services.DMXReaderService, services.FadingService)
 
-	if willBridge, objection := opts.CanBridge(); willBridge {
-		services.BridgeService = bridge.NewBridgeService(services.DMXReaderService, services.FadingService)
-	} else {
-		log.Infof("%s -> Skipping to bridge.", objection)
-		if ok, _ := opts.CanReadDMX(); ok {
+	if willBridge, _ := opts.CanBridge(); !willBridge {
+		if canRead, _ := opts.CanReadDMX(); canRead {
 			log.Infof("Creating DMX Logger to utilize the READability.")
 			pSvc := printer.NewDMXLoggerService(services.DMXReaderService)
 			go pSvc.PrintDMX()
