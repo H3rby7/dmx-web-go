@@ -101,6 +101,7 @@ func (b *BridgeService) updateAll(fadeDurationMillis int64) {
 	}
 	log.Debugf("Updating over %v millis with %v", fadeDurationMillis, b.foreignInput)
 	for i := range b.foreignInput {
+		// TODO: Fix Bridge also trying to update channel '0', which does not exist.
 		b.fadingService.FadeTo(int16(i), b.foreignInput[i], fadeDurationMillis)
 	}
 }
