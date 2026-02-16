@@ -34,12 +34,25 @@ const sceneA = [
   { channel: 1, value: 50 },
   { channel: 2, value: 100 },
   { channel: 3, value: 150 },
+  { channel: 4, value: 0 },
+  { channel: 5, value: 0 },
+  { channel: 6, value: 0 },
+  { channel: 7, value: 0 },
 ];
 const sceneB = [
   { channel: 1, value: 150 },
+  { channel: 2, value: 0 },
+  { channel: 3, value: 0 },
   { channel: 4, value: 200 },
+  { channel: 5, value: 0 },
+  { channel: 6, value: 0 },
+  { channel: 7, value: 0 },
 ];
 const sceneC = [
+  { channel: 1, value: 0 },
+  { channel: 2, value: 0 },
+  { channel: 3, value: 0 },
+  { channel: 4, value: 0 },
   { channel: 5, value: 255 },
   { channel: 6, value: 255 },
   { channel: 7, value: 255 },

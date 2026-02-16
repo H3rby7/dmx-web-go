@@ -10,6 +10,7 @@ Offers simplistic API and converts calls into DMX commands.
     - [Trigger API](#trigger-api)
   - [Example Static Serving](#example-static-serving)
 - [DEV Todos](#dev-todos)
+  - [Mocking / Web Console](#mocking--web-console)
 
 # Running
 
@@ -81,3 +82,9 @@ go run cmd\dmxweb\dmxweb.go -dmx-write-port COM5 -log-level debug -static ./stat
 - [ ] Improve Documentation 
   - [ ] on the options
   - [ ] on triggers and chases
+
+## Mocking / Web Console
+
+- [ ] Console-like Web Interface for MockRead Inputs.
+- [ ] Console-like Web Interface to see MockWrite Outputs.
+  - [ ] Gets its updates via Websocket
