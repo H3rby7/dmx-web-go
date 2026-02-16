@@ -26,34 +26,27 @@ function sendDMX(list = []) {
     body: JSON.stringify({ List: list }),
     method: "PATCH",
   })
-    .catch(() => feedback("ERROR!"))
-    .then(() => feedback("SUCCESS!"));
+    .catch(() => feedback("ERROR! ERROR! ERROR! ERROR! ERROR! ERROR! ERROR! ERROR! ERROR! ERROR!"))
+    .then(() => feedback(""));
 }
 
-const sceneA = [
-  { channel: 1, value: 50 },
-  { channel: 2, value: 100 },
-  { channel: 3, value: 150 },
-  { channel: 4, value: 0 },
-  { channel: 5, value: 0 },
-  { channel: 6, value: 0 },
-  { channel: 7, value: 0 },
-];
-const sceneB = [
-  { channel: 1, value: 150 },
-  { channel: 2, value: 0 },
-  { channel: 3, value: 0 },
-  { channel: 4, value: 200 },
-  { channel: 5, value: 0 },
-  { channel: 6, value: 0 },
-  { channel: 7, value: 0 },
-];
-const sceneC = [
-  { channel: 1, value: 0 },
-  { channel: 2, value: 0 },
-  { channel: 3, value: 0 },
-  { channel: 4, value: 0 },
-  { channel: 5, value: 255 },
-  { channel: 6, value: 255 },
-  { channel: 7, value: 255 },
-];
+/**
+ * Register onChange function that sends the 'value' from the given HTML element
+ * to the backend for the specified channel
+ *
+ * @param {string} elementId ID of the HTML element holding the channel
+ * @param {int} channel for the dmx value
+ *
+ * Example useage `registerOnChangeSendDMX('elementA', 1)"`
+ */
+function registerOnChangeSendDMX(elementId, channel) {
+  console.debug(`Registering onChange handler for #${elementId}`);
+  const el = document.getElementById(elementId);
+  if (!el) {
+    console.error(`Element #${elementId} not found...`);
+  }
+  el.addEventListener("input", () => {
+    const value = parseInt(el.value);
+    sendDMX([{ channel, value }]);
+  });
+}

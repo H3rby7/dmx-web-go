@@ -85,6 +85,6 @@ go run cmd\dmxweb\dmxweb.go -dmx-write-port COM5 -log-level debug -static ./stat
 
 ## Mocking / Web Console
 
-- [ ] Console-like Web Interface for MockRead Inputs.
+- [X] Console-like Web Interface for MockRead Inputs.
 - [ ] Console-like Web Interface to see MockWrite Outputs.
   - [ ] Gets its updates via Websocket
