@@ -16,6 +16,12 @@ Offers simplistic API and converts calls into DMX commands.
 ```sh
 # Replace COM5 with whatever port your dmx is attached to
 go run cmd\dmxweb\dmxweb.go -dmx-write-port COM5
+
+# Does not write to DMX, instead writes state to log output.
+go run cmd\dmxweb\dmxweb.go -dmx-write-port MOCK -static ./www
+
+# MOCK DMX for both Read and Write and bridge with example2 config
+go run cmd\dmxweb\dmxweb.go -dmx-write-port MOCK -dmx-read-port MOCK -dmx-bridge -static ./www -config configs/example2.yaml
 ```
 
 If running/debugging via VS-Code, make sure to pass the necessary flags as args via [launch.json](./.vscode/launch.json). For example

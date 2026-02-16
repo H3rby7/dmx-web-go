@@ -102,6 +102,22 @@
         "-config", "./configs/example.yaml",
         "-dmx-bridge=true"
       ]
+    },
+    {
+      "name": "Launch ALL but MOCKed",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/cmd/dmxweb/dmxweb.go",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "-log-level", "debug",
+        "-dmx-channels", "16",
+        "-dmx-read-port", "MOCK",
+        "-dmx-write-port", "MOCK",
+        "-config", "./configs/example2.yaml",
+        "-dmx-bridge=true"
+      ]
     }
   ]
 }

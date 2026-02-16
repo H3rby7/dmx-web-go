@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	apiv1 "github.com/H3rby7/dmx-web-go/internal/api/v1"
+	mockrest "github.com/H3rby7/dmx-web-go/internal/mock/rest"
 	models_services "github.com/H3rby7/dmx-web-go/internal/model/services"
 	"github.com/H3rby7/dmx-web-go/internal/options"
 	"github.com/gin-gonic/gin"
@@ -23,10 +24,15 @@ func SetUpAndStartServer(services *models_services.ApplicationServices) *http.Se
 
 	if opts.Static != "" {
 		log.Debugf("Adding static route for '%s'", opts.Static)
-		router.Static("", opts.Static)
+		router.Static("web", opts.Static)
 	}
 
 	apiv1.RegisterHandlers(router.Group("/api/v1"), services)
+	if opts.ReadUsesMock() {
+		// TODO: "internal/mock/static" will not survive packaging and rollout. At least not like this
+		router.Static("mock", "internal/mock/static")
+		mockrest.RegisterMockHandlers(router.Group("/mock/api"), services)
+	}
 
 	log.Tracef("Configuring HTTP Server... ")
 	addr := ":" + opts.HttpPort

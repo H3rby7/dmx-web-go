@@ -23,7 +23,11 @@ func InitServices() *models_services.ApplicationServices {
 	log.Infof("Initializing Application Services... ")
 	services := &models_services.ApplicationServices{}
 
-	services.DMXReaderService = dmxusbpro.NewDMXReaderService()
+	if opts.ReadUsesMock() {
+		services.DMXReaderService = dmxmock.NewMockedDMXReaderService()
+	} else {
+		services.DMXReaderService = dmxusbpro.NewDMXReaderService()
+	}
 	if opts.WriteUsesMock() {
 		services.FadingService = dmxmock.NewMockedFadingService()
 	} else {
