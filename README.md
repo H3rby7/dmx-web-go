@@ -8,7 +8,7 @@ Offers simplistic API and converts calls into DMX commands.
   - [Example CURLs](#example-curls)
     - [DMX API](#dmx-api)
     - [Trigger API](#trigger-api)
-  - [Example WWW](#example-www)
+  - [Example Static Serving](#example-static-serving)
 - [DEV Todos](#dev-todos)
 
 # Running
@@ -18,10 +18,10 @@ Offers simplistic API and converts calls into DMX commands.
 go run cmd\dmxweb\dmxweb.go -dmx-write-port COM5
 
 # Does not write to DMX, instead writes state to log output.
-go run cmd\dmxweb\dmxweb.go -dmx-write-port MOCK -static ./www
+go run cmd\dmxweb\dmxweb.go -dmx-write-port MOCK -static ./static/example
 
 # MOCK DMX for both Read and Write and bridge with example2 config
-go run cmd\dmxweb\dmxweb.go -dmx-write-port MOCK -dmx-read-port MOCK -dmx-bridge -static ./www -config configs/example2.yaml
+go run cmd\dmxweb\dmxweb.go -dmx-write-port MOCK -dmx-read-port MOCK -dmx-bridge -static ./static/example -config configs/example2.yaml
 ```
 
 If running/debugging via VS-Code, make sure to pass the necessary flags as args via [launch.json](./.vscode/launch.json). For example
@@ -67,12 +67,12 @@ curl -v -X PUT http://localhost:8080/api/v1/dmx/clear
 curl -v -X POST -H "Content-Type: application/json" -d "{\"source\": \"35406887899400\"}" localhost:8080/api/v1/trigger
 ```
 
-## Example WWW
+## Example Static Serving
 
-Run with `-static ./www` as example to also have a static file server, serving a demo page.
+Run with `-static ./static/example` as example to also have a static file server, serving a demo page.
 
 ```sh
-go run cmd\dmxweb\dmxweb.go -dmx-write-port COM5 -log-level debug -static ./www
+go run cmd\dmxweb\dmxweb.go -dmx-write-port COM5 -log-level debug -static ./static/example
 ```
 
 # DEV Todos

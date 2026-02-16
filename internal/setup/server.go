@@ -30,7 +30,7 @@ func SetUpAndStartServer(services *models_services.ApplicationServices) *http.Se
 	apiv1.RegisterHandlers(router.Group("/api/v1"), services)
 	if opts.ReadUsesMock() {
 		// TODO: "internal/mock/static" will not survive packaging and rollout. At least not like this
-		router.Static("mock", "internal/mock/static")
+		router.Static("mock", "static/mock")
 		mockrest.RegisterMockHandlers(router.Group("/mock/api"), services)
 	}
 

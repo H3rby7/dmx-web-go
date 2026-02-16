@@ -29,7 +29,7 @@
       "cwd": "${workspaceFolder}",
       "args": [
         "-log-level", "debug",
-        "-static", "www",
+        "-static", "static/example",
         "-config", "./configs/example2.yaml"
       ]
     },
@@ -80,7 +80,7 @@
       "cwd": "${workspaceFolder}",
       "args": [
         "-log-level", "debug",
-        "-static", "www",
+        "-static", "static/example",
         "-dmx-channels", "16",
         "-dmx-read-port", "COM8",
         "-dmx-write-port", "COM7",
@@ -112,6 +112,7 @@
       "cwd": "${workspaceFolder}",
       "args": [
         "-log-level", "debug",
+        "-static", "static/example",
         "-dmx-channels", "16",
         "-dmx-read-port", "MOCK",
         "-dmx-write-port", "MOCK",
