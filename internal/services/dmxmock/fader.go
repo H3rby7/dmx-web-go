@@ -23,15 +23,10 @@ func NewMockedFadingService() *MockedFadingService {
 		isActive: false,
 		faders:   make([]models_fader.DMXFader, opts.DmxChannelCount+1),
 	}
-	s.ConnectDMX()
 	for i := range s.faders {
 		s.faders[i] = models_fader.NewDMXFader(int16(i))
 	}
-	if ok, objection := opts.CanWriteDMX(); ok {
-		s.Start()
-	} else {
-		log.Warnf("%s - Skipping Start", objection)
-	}
+	s.Start()
 	return s
 }
 
