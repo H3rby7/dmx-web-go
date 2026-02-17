@@ -1,5 +1,5 @@
-// Package reader provides tools to READ from DMX
-package reader
+// Package interfaces defines service interfaces to interact with DMX
+package interfaces
 
 // DMXReader handles reading from DMX
 type DMXReader interface {

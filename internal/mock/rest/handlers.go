@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// RegisterDMXHandlers registers the DMX handlers for V1 API
+// RegisterDMXHandlers registers the DMX handlers for the mock API
 func RegisterMockHandlers(g *gin.RouterGroup, services *models_services.ApplicationServices) {
 	if mock, ok := services.DMXReaderService.(*mock.MockedDMXReaderService); !ok {
 		log.Fatalf("Expected DMXReaderService to be a mock!")

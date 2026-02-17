@@ -1,10 +1,11 @@
+// Package mockservice defines mocked DMX services that do not require actual connected DMX hardware.
 package mockservice
 
 import (
 	log "github.com/sirupsen/logrus"
 )
 
-// DMXReaderService handles reading from DMX
+// MockedDMXReaderService mocks reading from DMX
 type MockedDMXReaderService struct {
 	reader chan map[int]byte
 }
@@ -19,7 +20,7 @@ func NewMockedDMXReaderService() (service *MockedDMXReaderService) {
 
 // OnDMXChange grants direct access to the DMX reader's 'OnDMXChange'
 //
-// Read from DMX and get the results back via channel.
+// Calls to 'ReadChangeset' are the mocked DMX input, that is dispatched via channel.
 // Call this function as goroutine as it is blocking!
 func (s *MockedDMXReaderService) OnDMXChange(c chan map[int]byte) {
 	for msg := range s.reader {
@@ -43,7 +44,7 @@ func (s *MockedDMXReaderService) DisconnectDMX() {
 	}
 }
 
-// ReadChangeset 'reads' an input
+// ReadChangeset does the mock magic by 'reading' the input and passing it to the application via the 'OnDMXChange' channel.
 func (s *MockedDMXReaderService) ReadChangeset(mockedInput map[int]byte) {
 	s.reader <- mockedInput
 }

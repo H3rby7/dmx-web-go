@@ -1,4 +1,5 @@
-package fading
+// Package interfaces defines service interfaces to interact with DMX
+package interfaces
 
 import (
 	models_scene "github.com/H3rby7/dmx-web-go/internal/model/scene"

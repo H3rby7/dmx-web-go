@@ -5,12 +5,12 @@ import (
 	dtos "github.com/H3rby7/dmx-web-go/internal/api/v1/dtos"
 	apiv1mappers "github.com/H3rby7/dmx-web-go/internal/api/v1/mappers"
 	models_fader "github.com/H3rby7/dmx-web-go/internal/model/fader"
-	"github.com/H3rby7/dmx-web-go/internal/services/fading"
+	"github.com/H3rby7/dmx-web-go/internal/services/interfaces"
 	"github.com/gin-gonic/gin"
 )
 
 // RegisterDMXHandlers registers the DMX handlers for V1 API
-func RegisterDMXHandlers(g *gin.RouterGroup, svc fading.DMXFader) {
+func RegisterDMXHandlers(g *gin.RouterGroup, svc interfaces.DMXFader) {
 	g.PATCH("dmx", createPatchDmxHandler(svc))
 	g.PATCH("dmx/fade", createPatchDmxFadeHandler(svc))
 	g.PUT("dmx/clear", createPutDmxClearHandler(svc))
@@ -19,7 +19,7 @@ func RegisterDMXHandlers(g *gin.RouterGroup, svc fading.DMXFader) {
 // createPatchDmxHandler returns a HandlerFunction as needed by GIN
 //
 // The function parses the request body and applies the scene immediately
-func createPatchDmxHandler(svc fading.DMXFader) gin.HandlerFunc {
+func createPatchDmxHandler(svc interfaces.DMXFader) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		data := dtos.Scene{}
 		err := c.BindJSON(&data)
@@ -36,7 +36,7 @@ func createPatchDmxHandler(svc fading.DMXFader) gin.HandlerFunc {
 // createPatchDmxFadeHandler returns a HandlerFunction as needed by GIN
 //
 // The function parses the request and and applies the scene using the given fade time
-func createPatchDmxFadeHandler(svc fading.DMXFader) gin.HandlerFunc {
+func createPatchDmxFadeHandler(svc interfaces.DMXFader) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		data := dtos.SceneWithFade{}
 		err := c.BindJSON(&data)
@@ -51,7 +51,7 @@ func createPatchDmxFadeHandler(svc fading.DMXFader) gin.HandlerFunc {
 }
 
 // Clear all DMX values immediately
-func createPutDmxClearHandler(svc fading.DMXFader) gin.HandlerFunc {
+func createPutDmxClearHandler(svc interfaces.DMXFader) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		svc.ClearAll()
 		c.String(200, "OK")

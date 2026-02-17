@@ -1,3 +1,4 @@
+// Package mockservice defines mocked DMX services that do not require actual connected DMX hardware.
 package mockservice
 
 import (
@@ -9,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// DMX Writer that takes care of fading channels to the desired values over time.
+// Mocked DMX Fader that manages state of fading channels and logging their values upon change.
 type MockedFadingService struct {
 	isActive bool
 	faders   []models_fader.DMXFader
@@ -67,6 +68,7 @@ func (s *MockedFadingService) Stop() {
 }
 
 // Blocking loop that calculates and runs updates on the faders.
+// Instead of writing to DMX the state is logged to stdout.
 func (s *MockedFadingService) loop() {
 	log.Infof("Started loop")
 	s.isActive = true
