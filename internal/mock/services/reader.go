@@ -1,4 +1,4 @@
-package dmxmock
+package mockservice
 
 import (
 	log "github.com/sirupsen/logrus"

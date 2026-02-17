@@ -2,12 +2,12 @@
 package setup
 
 import (
+	mock "github.com/H3rby7/dmx-web-go/internal/mock/services"
 	models_services "github.com/H3rby7/dmx-web-go/internal/model/services"
 	"github.com/H3rby7/dmx-web-go/internal/options"
 	"github.com/H3rby7/dmx-web-go/internal/services/bridge"
 	"github.com/H3rby7/dmx-web-go/internal/services/chase"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
-	"github.com/H3rby7/dmx-web-go/internal/services/dmxmock"
 	"github.com/H3rby7/dmx-web-go/internal/services/enttec/dmxusbpro"
 	"github.com/H3rby7/dmx-web-go/internal/services/event"
 	"github.com/H3rby7/dmx-web-go/internal/services/printer"
@@ -24,12 +24,12 @@ func InitServices() *models_services.ApplicationServices {
 	services := &models_services.ApplicationServices{}
 
 	if opts.ReadUsesMock() {
-		services.DMXReaderService = dmxmock.NewMockedDMXReaderService()
+		services.DMXReaderService = mock.NewMockedDMXReaderService()
 	} else {
 		services.DMXReaderService = dmxusbpro.NewDMXReaderService()
 	}
 	if opts.WriteUsesMock() {
-		services.FadingService = dmxmock.NewMockedFadingService()
+		services.FadingService = mock.NewMockedFadingService()
 	} else {
 		services.FadingService = dmxusbpro.NewFadingService()
 	}
