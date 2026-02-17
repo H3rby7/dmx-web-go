@@ -6,8 +6,7 @@ import (
 	"github.com/H3rby7/dmx-web-go/internal/services/chase"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
 	"github.com/H3rby7/dmx-web-go/internal/services/event"
-	"github.com/H3rby7/dmx-web-go/internal/services/fading"
-	"github.com/H3rby7/dmx-web-go/internal/services/reader"
+	"github.com/H3rby7/dmx-web-go/internal/services/interfaces"
 	"github.com/H3rby7/dmx-web-go/internal/services/trigger"
 )
 
@@ -17,7 +16,7 @@ type ApplicationServices struct {
 	ChaseService     *chase.ChaseService
 	ConfigService    *config.ConfigService
 	EventService     *event.EventService
-	FadingService    *fading.FadingService
-	DMXReaderService *reader.DMXReaderService
+	FadingService    interfaces.DMXFader
+	DMXReaderService interfaces.DMXReader
 	TriggerService   *trigger.TriggerService
 }

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <title>HTML DMX Mock</title>
+  <script src="scripts.js"></script>
+  <link href="styles.css" rel="stylesheet">
+  <script>
+    const channelCount = 8;
+    function sendAllDMX() {
+      const data = [];
+      const faderInputs = document.getElementById("fadergrid").querySelectorAll(".fader input");
+      for (const fader of faderInputs) {
+        const channel = parseInt(fader.getAttribute("channel"));
+        const value = parseInt(fader.value);
+        data.push({ channel, value });
+      }
+      sendDMX(data);
+    }
+  </script>
+</head>
+
+<body>
+  <div>
+    <h1>HTML DMX Mock</h1>
+  </div>
+  <div>
+    <span id="feedback"></span>
+  </div>
+  <div>
+    <div class="fadergrid" id="fadergrid">
+      <!--
+      <div class="channel">
+        <label for="c-0">0</label>
+        <div class="fader">
+          <div class="rotate90"><input type="range" id="c-0" min="0" max="255" step="1"></div>
+        </div>
+        <div class="value">123</div>
+      </div>
+      -->
+    </div>
+    <button onclick="sendAllDMX()">Send All</button>
+  </div>
+  <script>
+    const grid = document.getElementById("fadergrid");
+    for (let channel = 1; channel <= channelCount; channel++) {
+      const inputId = `c-${channel}`;
+      const inputStartValue = (channel * 10) % 255;
+
+      const divClassChannel = grid.appendChild(document.createElement("div"));
+      divClassChannel.className = "channel";
+      addChannelAttr(divClassChannel, channel);
+
+      const label = divClassChannel.appendChild(document.createElement("label"));
+      label.htmlFor = inputId;
+      label.innerText = `${channel}`;
+
+      const faderDiv = divClassChannel.appendChild(document.createElement("div"));
+      faderDiv.className = "fader";
+
+      const rotate90Div = faderDiv.appendChild(document.createElement("div"));
+      rotate90Div.className = "rotate90";
+
+      const input = rotate90Div.appendChild(document.createElement("input"));
+      input.type = "range";
+      input.min = "0";
+      input.max = "255";
+      input.step = "1";
+      input.id = inputId;
+      addChannelAttr(input, channel);
+      input.value = inputStartValue;
+
+      const currentValueDiv = divClassChannel.appendChild(document.createElement("div"));
+      currentValueDiv.className = "value";
+      currentValueDiv.innerText = inputStartValue;
+
+      input.addEventListener("input", () => {
+        currentValueDiv.innerText = input.value;
+        const value = parseInt(input.value);
+        sendDMX([{ channel, value }]);
+      });
+    }
+
+    function addChannelAttr(htmlElement, channel) {
+      const attrChannel = document.createAttribute("channel");
+      attrChannel.value = channel;
+      htmlElement.setAttributeNode(attrChannel);
+    }
+  </script>
+</body>

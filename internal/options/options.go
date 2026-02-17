@@ -3,6 +3,7 @@ package options
 
 import (
 	"flag"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -34,9 +35,9 @@ func InitAppOptions() {
 	configFile := flag.String("config", "./configs/example.yaml", "Relative path to the config file")
 	dmxChannels := flag.Int("dmx-channels", 512, "DMX channel count. Lower count saves some energy as less needs to be sent")
 	dmxReadBaudrate := flag.Int("dmx-read-baud", 57600, "Baudrate for the reading device")
-	dmxReadPort := flag.String("dmx-read-port", "", "Input interface (e.g. COM4 OR /dev/tty.usbserial)")
+	dmxReadPort := flag.String("dmx-read-port", "", "Input interface (e.g. COM4 OR /dev/tty.usbserial) or MOCK")
 	dmxWriteBaudrate := flag.Int("dmx-write-baud", 57600, "Baudrate for the writing device")
-	dmxWritePort := flag.String("dmx-write-port", "", "Output interface (e.g. COM4 OR /dev/tty.usbserial)")
+	dmxWritePort := flag.String("dmx-write-port", "", "Output interface (e.g. COM4 OR /dev/tty.usbserial) OR MOCK")
 	dmxClearOnQuit := flag.Bool("dmx-clear-on-quit", true, "Whether or not to send '0's out for all DMX channels upon exit.")
 	dmxBridge := flag.Bool("dmx-bridge", false, "Whether or not to send the read input into write upon receiving.")
 	dmxLogLevel := flag.Uint("dmx-log-level", 0, "Granularity of DMX logs [0,1,2]")
@@ -98,4 +99,14 @@ func (opts *AppOptions) CanBridge() (ok bool, objection string) {
 		return false, readObj
 	}
 	return true, ""
+}
+
+// WriteUsesMock checks if we should use a mocked Writer
+func (opts *AppOptions) WriteUsesMock() bool {
+	return strings.ToLower(opts.DmxWritePort) == "mock"
+}
+
+// ReadUsesMock checks if we use a mocked Reader
+func (opts *AppOptions) ReadUsesMock() bool {
+	return strings.ToLower(opts.DmxReadPort) == "mock"
 }

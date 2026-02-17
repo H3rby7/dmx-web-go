@@ -1,5 +1,5 @@
-// Package reader provides tools to READ from DMX
-package reader
+// Package dmxusbpro provides services to interact with the Enttec DMX USB Pro Controller
+package dmxusbpro
 
 import (
 	"github.com/H3rby7/dmx-web-go/internal/options"
@@ -28,8 +28,17 @@ func NewDMXReaderService() (service *DMXReaderService) {
 //
 // Read from DMX and get the results back via channel.
 // Call this function as goroutine as it is blocking!
-func (s *DMXReaderService) OnDMXChange(c chan messages.EnttecDMXUSBProApplicationMessage) {
-	s.reader.OnDMXChange(c, 15)
+func (s *DMXReaderService) OnDMXChange(c chan map[int]byte) {
+	raw := make(chan messages.EnttecDMXUSBProApplicationMessage)
+	go s.reader.OnDMXChange(raw, 15)
+	for msg := range raw {
+		cs, err := messages.ToChangeSet(msg)
+		if err != nil {
+			log.Warnf("Could not convert to changeset, but read \tlabel=%v \tdata=%v", msg.GetLabel(), msg.GetPayload())
+		} else {
+			c <- cs
+		}
+	}
 }
 
 // ConnectDMX connects the internal reader.
@@ -54,11 +63,10 @@ func (s *DMXReaderService) ConnectDMX() {
 		log.Fatalf("Failed to connect DMX Controller for READING: %s", err)
 		return
 	}
+	log.Infof("Switching Read Mode to 'changes only'")
+	reader.SwitchReadMode(1)
+
 	s.reader = reader
-	if opts.DmxBridge {
-		log.Infof("Switching Read Mode to 'changes only'")
-		s.reader.SwitchReadMode(1)
-	}
 }
 
 // DisconnectDMX disconnects the internal reader.

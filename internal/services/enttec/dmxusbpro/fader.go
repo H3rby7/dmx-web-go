@@ -1,4 +1,5 @@
-package fading
+// Package dmxusbpro provides services to interact with the Enttec DMX USB Pro Controller
+package dmxusbpro
 
 import (
 	"time"

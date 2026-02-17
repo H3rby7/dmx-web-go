@@ -2,13 +2,15 @@
 package setup
 
 import (
+	mock "github.com/H3rby7/dmx-web-go/internal/mock/services"
 	models_services "github.com/H3rby7/dmx-web-go/internal/model/services"
+	"github.com/H3rby7/dmx-web-go/internal/options"
 	"github.com/H3rby7/dmx-web-go/internal/services/bridge"
 	"github.com/H3rby7/dmx-web-go/internal/services/chase"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
+	"github.com/H3rby7/dmx-web-go/internal/services/enttec/dmxusbpro"
 	"github.com/H3rby7/dmx-web-go/internal/services/event"
-	"github.com/H3rby7/dmx-web-go/internal/services/fading"
-	"github.com/H3rby7/dmx-web-go/internal/services/reader"
+	"github.com/H3rby7/dmx-web-go/internal/services/printer"
 	"github.com/H3rby7/dmx-web-go/internal/services/trigger"
 	log "github.com/sirupsen/logrus"
 )
@@ -17,12 +19,29 @@ import (
 //
 // Returns a struct of type [ApplicationServices] holding all service references
 func InitServices() *models_services.ApplicationServices {
+	opts := options.GetAppOptions()
 	log.Infof("Initializing Application Services... ")
 	services := &models_services.ApplicationServices{}
 
-	services.DMXReaderService = reader.NewDMXReaderService()
-	services.FadingService = fading.NewFadingService()
+	if opts.ReadUsesMock() {
+		services.DMXReaderService = mock.NewMockedDMXReaderService()
+	} else {
+		services.DMXReaderService = dmxusbpro.NewDMXReaderService()
+	}
+	if opts.WriteUsesMock() {
+		services.FadingService = mock.NewMockedFadingService()
+	} else {
+		services.FadingService = dmxusbpro.NewFadingService()
+	}
 	services.BridgeService = bridge.NewBridgeService(services.DMXReaderService, services.FadingService)
+
+	if willBridge, _ := opts.CanBridge(); !willBridge {
+		if canRead, _ := opts.CanReadDMX(); canRead {
+			log.Infof("Creating DMX Logger to utilize the READability.")
+			pSvc := printer.NewDMXLoggerService(services.DMXReaderService)
+			go pSvc.PrintDMX()
+		}
+	}
 
 	services.ConfigService = config.NewConfigService()
 	services.ChaseService = chase.NewChaseService(services.ConfigService, services.FadingService, services.BridgeService)

@@ -6,21 +6,21 @@ import (
 	models_scene "github.com/H3rby7/dmx-web-go/internal/model/scene"
 	"github.com/H3rby7/dmx-web-go/internal/services/bridge"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
-	"github.com/H3rby7/dmx-web-go/internal/services/fading"
+	"github.com/H3rby7/dmx-web-go/internal/services/interfaces"
 	log "github.com/sirupsen/logrus"
 )
 
 // ChaseService handles chases and actions on chases
 type ChaseService struct {
 	chases        []models_chase.Chase
-	fadingService *fading.FadingService
+	fadingService interfaces.DMXFader
 	bridgeService *bridge.BridgeService
 }
 
 // NewChaseService creates a new [ChaseService] instance
 //
 // Also loads the chases from the [ConfigService]
-func NewChaseService(configService *config.ConfigService, fadingService *fading.FadingService, bridgeService *bridge.BridgeService) *ChaseService {
+func NewChaseService(configService *config.ConfigService, fadingService interfaces.DMXFader, bridgeService *bridge.BridgeService) *ChaseService {
 	log.Debugf("Creating new ChaseService")
 	chases := configService.GetChases()
 	return &ChaseService{
