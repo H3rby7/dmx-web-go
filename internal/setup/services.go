@@ -8,8 +8,9 @@ import (
 	"github.com/H3rby7/dmx-web-go/internal/services/bridge"
 	"github.com/H3rby7/dmx-web-go/internal/services/chase"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
-	"github.com/H3rby7/dmx-web-go/internal/services/enttec/dmxusbpro"
+	"github.com/H3rby7/dmx-web-go/internal/services/enttec/enttecservices"
 	"github.com/H3rby7/dmx-web-go/internal/services/event"
+	"github.com/H3rby7/dmx-web-go/internal/services/fader"
 	"github.com/H3rby7/dmx-web-go/internal/services/printer"
 	"github.com/H3rby7/dmx-web-go/internal/services/trigger"
 	log "github.com/sirupsen/logrus"
@@ -26,12 +27,12 @@ func InitServices() *models_services.ApplicationServices {
 	if opts.ReadUsesMock() {
 		services.DMXReaderService = mock.NewMockedDMXReaderService()
 	} else {
-		services.DMXReaderService = dmxusbpro.NewDMXReaderService()
+		services.DMXReaderService = enttecservices.NewDMXReaderService()
 	}
 	if opts.WriteUsesMock() {
 		services.FadingService = mock.NewMockedFadingService()
 	} else {
-		services.FadingService = dmxusbpro.NewFadingService()
+		services.FadingService = fader.NewFadingService()
 	}
 	services.BridgeService = bridge.NewBridgeService(services.DMXReaderService, services.FadingService)
 

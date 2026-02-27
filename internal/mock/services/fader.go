@@ -89,14 +89,9 @@ func (s *MockedFadingService) loop() {
 	log.Infof("Stopped loop")
 }
 
-// Connect to DMX
-func (s *MockedFadingService) ConnectDMX() {
-	log.Info("Connect faked")
-}
-
 // Disconnect from DMX
-func (s *MockedFadingService) DisconnectDMX() {
-	log.Info("Disconnect faked")
+func (s *MockedFadingService) CleanUp() {
+	log.Info("CleanUp")
 }
 
 // logFaders prints out all faders to the log that are active or have values > 0

@@ -1,5 +1,5 @@
-// Package dmxusbpro provides services to interact with the Enttec DMX USB Pro Controller
-package dmxusbpro
+// Package enttecservices provides services to interact with the Enttec DMX USB Pro Controller
+package enttecservices
 
 import (
 	"github.com/H3rby7/dmx-web-go/internal/options"

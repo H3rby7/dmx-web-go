@@ -1,5 +1,5 @@
-// Package dmxusbpro provides services to interact with the Enttec DMX USB Pro Controller
-package dmxusbpro
+// Package fader provides a services to fade DMX writes
+package fader
 
 import (
 	"time"
@@ -7,15 +7,14 @@ import (
 	models_fader "github.com/H3rby7/dmx-web-go/internal/model/fader"
 	models_scene "github.com/H3rby7/dmx-web-go/internal/model/scene"
 	"github.com/H3rby7/dmx-web-go/internal/options"
-	"github.com/H3rby7/usbdmx-golang/controller/enttec/dmxusbpro"
+	"github.com/H3rby7/dmx-web-go/internal/services/enttec/enttecservices"
 	log "github.com/sirupsen/logrus"
-	"github.com/tarm/serial"
 )
 
 // DMX Writer that takes care of fading channels to the desired values over time.
 type FadingService struct {
 	isActive bool
-	writer   *dmxusbpro.EnttecDMXUSBProController
+	writer   *enttecservices.WriterServiceEnttecDMXUSBPro
 	faders   []models_fader.DMXFader
 }
 
@@ -23,33 +22,21 @@ type FadingService struct {
 func NewFadingService() *FadingService {
 	log.Debugf("Creating new FadingService")
 	opts := options.GetAppOptions()
+	writer := enttecservices.NewWriterServiceEnttecDMXUSBPro()
 	f := &FadingService{
 		isActive: false,
+		writer:   writer,
 		faders:   make([]models_fader.DMXFader, opts.DmxChannelCount+1),
 	}
-	f.ConnectDMX()
 	for i := range f.faders {
 		f.faders[i] = models_fader.NewDMXFader(int16(i))
 	}
 	if ok, objection := opts.CanWriteDMX(); ok {
-		f.getStageFromWriter()
 		f.Start()
 	} else {
 		log.Warnf("%s - Skipping Start", objection)
 	}
 	return f
-}
-
-// Get current stage from the writer and update internal faders with it
-//
-// A call to this function from the outside is only necessary, if the fading writer is not using the actual writer exclusively.
-func (f *FadingService) getStageFromWriter() {
-	log.Infof("Updating fader with values from writer stage")
-	stage := f.writer.GetStage()
-	for i := range f.faders {
-		log.Tracef("Updating channel '%v' to '%v'", i, stage[i])
-		f.faders[i].SetValue(float32(stage[i]))
-	}
 }
 
 // Fade a given channel to a given value over a given duration
@@ -88,6 +75,12 @@ func (f *FadingService) Stop() {
 	f.isActive = false
 }
 
+// Stop the update loop go-routine
+func (f *FadingService) CleanUp() {
+	log.Infof("Cleaning up FadingService")
+	f.writer.DisconnectDMX()
+}
+
 // Blocking loop that calculates a nd runs updates on the faders.
 func (f *FadingService) loop() {
 	log.Infof("Started fading writer")
@@ -95,60 +88,17 @@ func (f *FadingService) loop() {
 	for f.isActive {
 		// FLAG to help us detect if we need to write to DMX
 		dirty := false
+		values := make(map[int16]byte, len(f.faders))
 		for i := range f.faders {
 			if f.faders[i].IsActive() {
 				dirty = true
-				f.writer.Stage(int16(i), f.faders[i].UpdateValue())
+				values[int16(i)] = f.faders[i].UpdateValue()
 			}
 		}
 		if dirty {
-			f.writer.Commit()
+			f.writer.Write(values)
 		}
 		time.Sleep(time.Millisecond * models_fader.TICK_INTERVAL_MILLIS)
 	}
 	log.Infof("Stopped fading writer")
-}
-
-// Connect to DMX
-func (s *FadingService) ConnectDMX() {
-	opts := options.GetAppOptions()
-
-	if ok, objection := opts.CanWriteDMX(); !ok {
-		log.Infof("%s - Skipping DMX Writer Creation", objection)
-		return
-	}
-
-	channels := opts.DmxChannelCount
-	port := opts.DmxWritePort
-	baud := opts.DmxWriteBaudrate
-	log.Infof("Opening DMX Serial for WRITING using port %s", port)
-	config := &serial.Config{Name: port, Baud: baud}
-
-	// Create a controller and connect to it
-	writer := dmxusbpro.NewEnttecDMXUSBProController(config, channels, true)
-	writer.SetLogVerbosity(opts.DmxLogLevel)
-	if err := writer.Connect(); err != nil {
-		log.Fatalf("Failed to connect DMX Controller for WRITING: %s", err)
-	}
-	s.writer = writer
-}
-
-// Disconnect from DMX
-func (s *FadingService) DisconnectDMX() {
-	if s.writer != nil {
-		log.Debugf("Shutting down DMX writer...")
-		shouldClear := options.GetAppOptions().DmxClearOnQuit
-		if shouldClear {
-			log.Infof("Clearing DMX output to zeros")
-			s.writer.ClearStage()
-			s.writer.Commit()
-		} else {
-			log.Debugf("Skipping DMX output cleanup")
-		}
-		if err := s.writer.Disconnect(); err != nil {
-			log.Fatal("Error disconnecting DMX writer:", err)
-		} else {
-			log.Infof("DMX writer was shut down gracefully")
-		}
-	}
 }
