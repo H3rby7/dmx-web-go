@@ -5,8 +5,9 @@ import (
 	"github.com/H3rby7/dmx-web-go/internal/services/bridge"
 	"github.com/H3rby7/dmx-web-go/internal/services/chase"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
+	enttecinterfaces "github.com/H3rby7/dmx-web-go/internal/services/enttec/interfaces"
 	"github.com/H3rby7/dmx-web-go/internal/services/event"
-	"github.com/H3rby7/dmx-web-go/internal/services/interfaces"
+	"github.com/H3rby7/dmx-web-go/internal/services/fader"
 	"github.com/H3rby7/dmx-web-go/internal/services/trigger"
 )
 
@@ -16,7 +17,7 @@ type ApplicationServices struct {
 	ChaseService     *chase.ChaseService
 	ConfigService    *config.ConfigService
 	EventService     *event.EventService
-	FadingService    interfaces.DMXFader
-	DMXReaderService interfaces.DMXReader
+	FadingService    *fader.FadingService
+	DMXReaderService enttecinterfaces.EnttecDMXReader
 	TriggerService   *trigger.TriggerService
 }

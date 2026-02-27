@@ -1,5 +1,5 @@
-// Package mockservice defines mocked DMX services that do not require actual connected DMX hardware.
-package mockservice
+// Package enttecmock defines enttec mocked DMX services that do not require actual connected DMX hardware.
+package enttecmock
 
 import (
 	log "github.com/sirupsen/logrus"

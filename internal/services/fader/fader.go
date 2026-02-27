@@ -7,22 +7,21 @@ import (
 	models_fader "github.com/H3rby7/dmx-web-go/internal/model/fader"
 	models_scene "github.com/H3rby7/dmx-web-go/internal/model/scene"
 	"github.com/H3rby7/dmx-web-go/internal/options"
-	"github.com/H3rby7/dmx-web-go/internal/services/enttec/enttecservices"
+	enttecinterfaces "github.com/H3rby7/dmx-web-go/internal/services/enttec/interfaces"
 	log "github.com/sirupsen/logrus"
 )
 
 // DMX Writer that takes care of fading channels to the desired values over time.
 type FadingService struct {
 	isActive bool
-	writer   *enttecservices.WriterServiceEnttecDMXUSBPro
+	writer   enttecinterfaces.EnttecDMXWriter
 	faders   []models_fader.DMXFader
 }
 
 // Create a new fading writer with the current DMX stage
-func NewFadingService() *FadingService {
+func NewFadingService(writer enttecinterfaces.EnttecDMXWriter) *FadingService {
 	log.Debugf("Creating new FadingService")
 	opts := options.GetAppOptions()
-	writer := enttecservices.NewWriterServiceEnttecDMXUSBPro()
 	f := &FadingService{
 		isActive: false,
 		writer:   writer,

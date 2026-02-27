@@ -2,12 +2,12 @@
 package setup
 
 import (
-	mock "github.com/H3rby7/dmx-web-go/internal/mock/services"
 	models_services "github.com/H3rby7/dmx-web-go/internal/model/services"
 	"github.com/H3rby7/dmx-web-go/internal/options"
 	"github.com/H3rby7/dmx-web-go/internal/services/bridge"
 	"github.com/H3rby7/dmx-web-go/internal/services/chase"
 	"github.com/H3rby7/dmx-web-go/internal/services/config"
+	"github.com/H3rby7/dmx-web-go/internal/services/enttec/enttecmock"
 	"github.com/H3rby7/dmx-web-go/internal/services/enttec/enttecservices"
 	"github.com/H3rby7/dmx-web-go/internal/services/event"
 	"github.com/H3rby7/dmx-web-go/internal/services/fader"
@@ -25,14 +25,14 @@ func InitServices() *models_services.ApplicationServices {
 	services := &models_services.ApplicationServices{}
 
 	if opts.ReadUsesMock() {
-		services.DMXReaderService = mock.NewMockedDMXReaderService()
+		services.DMXReaderService = enttecmock.NewMockedDMXReaderService()
 	} else {
 		services.DMXReaderService = enttecservices.NewDMXReaderService()
 	}
 	if opts.WriteUsesMock() {
-		services.FadingService = mock.NewMockedFadingService()
+		services.FadingService = fader.NewFadingService(enttecmock.NewMockedDmxWriterService())
 	} else {
-		services.FadingService = fader.NewFadingService()
+		services.FadingService = fader.NewFadingService(enttecservices.NewWriterServiceEnttecDMXUSBPro())
 	}
 	services.BridgeService = bridge.NewBridgeService(services.DMXReaderService, services.FadingService)
 

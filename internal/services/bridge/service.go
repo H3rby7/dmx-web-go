@@ -4,7 +4,8 @@ package bridge
 import (
 	models_fader "github.com/H3rby7/dmx-web-go/internal/model/fader"
 	"github.com/H3rby7/dmx-web-go/internal/options"
-	"github.com/H3rby7/dmx-web-go/internal/services/interfaces"
+	enttecinterfaces "github.com/H3rby7/dmx-web-go/internal/services/enttec/interfaces"
+	"github.com/H3rby7/dmx-web-go/internal/services/fader"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -14,12 +15,12 @@ type BridgeService struct {
 	isActive bool
 	// Holds DMX data, as DMX starts with channel '1' the index '0' is unused.
 	foreignInput  []byte
-	reader        interfaces.DMXReader
-	fadingService interfaces.DMXFader
+	reader        enttecinterfaces.EnttecDMXReader
+	fadingService *fader.FadingService
 }
 
 // NewBridgeService creates a new [BridgeService] instance with proper defaults
-func NewBridgeService(reader interfaces.DMXReader, fadingService interfaces.DMXFader) *BridgeService {
+func NewBridgeService(reader enttecinterfaces.EnttecDMXReader, fadingService *fader.FadingService) *BridgeService {
 	log.Debugf("Creating new BridgeService")
 	opts := options.GetAppOptions()
 	channels := opts.DmxChannelCount

@@ -2,17 +2,17 @@
 package printer
 
 import (
-	"github.com/H3rby7/dmx-web-go/internal/services/interfaces"
+	enttecinterfaces "github.com/H3rby7/dmx-web-go/internal/services/enttec/interfaces"
 	log "github.com/sirupsen/logrus"
 )
 
 // DMXLoggerService reads from DMX and logs the received changesets
 type DMXLoggerService struct {
-	reader interfaces.DMXReader
+	reader enttecinterfaces.EnttecDMXReader
 }
 
 // NewDMXLoggerService creates a new [DMXLoggerService] instance with proper defaults
-func NewDMXLoggerService(reader interfaces.DMXReader) *DMXLoggerService {
+func NewDMXLoggerService(reader enttecinterfaces.EnttecDMXReader) *DMXLoggerService {
 	log.Debugf("Creating new DMXLoggerService")
 	b := &DMXLoggerService{
 		reader: reader,
