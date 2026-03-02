@@ -11,6 +11,7 @@ Offers simplistic API and converts calls into DMX commands.
   - [Example Static Serving](#example-static-serving)
 - [DEV Todos](#dev-todos)
   - [Mocking / Web Console](#mocking--web-console)
+  - [Config Mode](#config-mode)
 
 # Running
 
@@ -88,3 +89,10 @@ go run cmd\dmxweb\dmxweb.go -dmx-write-port COM5 -log-level debug -static ./stat
 - [X] Console-like Web Interface for MockRead Inputs.
 - [ ] Console-like Web Interface to see MockWrite Outputs.
   - [ ] Gets its updates via Websocket
+
+## Config Mode
+
+- [ ] In bridged mode listen to inputs to create a config.yaml
+  - [ ] Store scenes from active input
+  - [ ] Find dimmers: By asking to turn on all lights, then fade down the Master fader, to see which channels get reduced
+- [ ] Nice GUI to edit config.yaml files
